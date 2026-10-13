@@ -1,0 +1,13 @@
+{
+  "id": "yaroslavrogoza/synthroute-gpu-smoke",
+  "title": "synthroute-gpu-smoke",
+  "code_file": "gpu_smoke.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": false,
+  "dataset_sources": [],
+  "competition_sources": [],
+  "kernel_sources": []
+}

@@ -40,8 +40,9 @@ schemas/route/ JSON Schema формата маршрута + примеры (val
 prompts/       версионированные промпты
 eval/          бенчмарк, раннер, результаты прогонов
 data/          raw (не в git) · fixtures (в git) · карточки датасетов
-docs/          adr · rules · research · reports · paper · expert · vision
-scripts/       служебные скрипты (check_rules.py и др.)
+docs/          adr · rules · research · reports · paper · expert · vision · architecture · features
+scripts/       служебные скрипты (check_rules.py, check_models.py)
+spikes/        одноразовые прототипы для проверки осуществимости (не продакшен)
 ```
 
 Пока существует только каркас правил и документации. Каталоги кода создаются по мере появления фич.

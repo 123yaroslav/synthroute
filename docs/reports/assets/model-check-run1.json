@@ -1,0 +1,982 @@
+{
+  "checked_at": "2026-10-13T09:38:49+00:00",
+  "sdk": "google-genai 2.30.0",
+  "python": "3.12.12",
+  "available_models": [
+    {
+      "id": "gemini-2.5-flash",
+      "display_name": "Gemini 2.5 Flash",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-2.5-pro",
+      "display_name": "Gemini 2.5 Pro",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-2.5-flash-preview-tts",
+      "display_name": "Gemini 2.5 Flash Preview TTS",
+      "input_token_limit": 8192,
+      "output_token_limit": 16384,
+      "actions": [
+        "countTokens",
+        "generateContent"
+      ]
+    },
+    {
+      "id": "gemini-2.5-pro-preview-tts",
+      "display_name": "Gemini 2.5 Pro Preview TTS",
+      "input_token_limit": 8192,
+      "output_token_limit": 16384,
+      "actions": [
+        "countTokens",
+        "generateContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemma-4-26b-a4b-it",
+      "display_name": "Gemma 4 26B A4B IT",
+      "input_token_limit": 262144,
+      "output_token_limit": 32768,
+      "actions": [
+        "generateContent",
+        "countTokens"
+      ]
+    },
+    {
+      "id": "gemma-4-31b-it",
+      "display_name": "Gemma 4 31B IT",
+      "input_token_limit": 262144,
+      "output_token_limit": 32768,
+      "actions": [
+        "generateContent",
+        "countTokens"
+      ]
+    },
+    {
+      "id": "gemini-flash-latest",
+      "display_name": "Gemini Flash Latest",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-flash-lite-latest",
+      "display_name": "Gemini Flash-Lite Latest",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-pro-latest",
+      "display_name": "Gemini Pro Latest",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-2.5-flash-lite",
+      "display_name": "Gemini 2.5 Flash-Lite",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-2.5-flash-image",
+      "display_name": "Nano Banana",
+      "input_token_limit": 32768,
+      "output_token_limit": 32768,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3-flash-preview",
+      "display_name": "Gemini 3 Flash Preview",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3.1-pro-preview",
+      "display_name": "Gemini 3.1 Pro Preview",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3.1-pro-preview-customtools",
+      "display_name": "Gemini 3.1 Pro Preview Custom Tools",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3.1-flash-lite-preview",
+      "display_name": "Gemini 3.1 Flash Lite Preview",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3.1-flash-lite",
+      "display_name": "Gemini 3.1 Flash Lite",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3-pro-image-preview",
+      "display_name": "Nano Banana Pro",
+      "input_token_limit": 131072,
+      "output_token_limit": 32768,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3-pro-image",
+      "display_name": "Nano Banana Pro",
+      "input_token_limit": 131072,
+      "output_token_limit": 32768,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "nano-banana-pro-preview",
+      "display_name": "Nano Banana Pro",
+      "input_token_limit": 131072,
+      "output_token_limit": 32768,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3.1-flash-image-preview",
+      "display_name": "Nano Banana 2",
+      "input_token_limit": 65536,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3.1-flash-image",
+      "display_name": "Nano Banana 2",
+      "input_token_limit": 65536,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3.1-flash-lite-image",
+      "display_name": "Nano Banana 2 Lite",
+      "input_token_limit": 65536,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-nano-banana-2.1",
+      "display_name": "Nano Banana 2.1",
+      "input_token_limit": 65536,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3.5-flash",
+      "display_name": "Gemini 3.5 Flash",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3.5-flash-lite",
+      "display_name": "Gemini 3.5 Flash Lite",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-omni-flash-preview",
+      "display_name": "Gemini Omni Flash Preview",
+      "input_token_limit": 131072,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens"
+      ]
+    },
+    {
+      "id": "gemini-omni-1.1-flash",
+      "display_name": "Gemini Omni 1.1 Flash",
+      "input_token_limit": 131072,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens"
+      ]
+    },
+    {
+      "id": "gemini-3.5-transcribe",
+      "display_name": "Gemini 3.5 Transcribe",
+      "input_token_limit": 98304,
+      "output_token_limit": 32768,
+      "actions": [
+        "generateContent",
+        "countTokens"
+      ]
+    },
+    {
+      "id": "gemini-3.6-flash",
+      "display_name": "Gemini 3.6 Flash",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3.7-flash",
+      "display_name": "Gemini 3.7 Flash",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3.8-flash",
+      "display_name": "Gemini 3.8 Flash",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "lyria-3-clip-preview",
+      "display_name": "Lyria 3 Clip Preview",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens"
+      ]
+    },
+    {
+      "id": "lyria-3-pro-preview",
+      "display_name": "Lyria 3 Pro Preview",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens"
+      ]
+    },
+    {
+      "id": "lyria-3.5",
+      "display_name": "Lyria 3.5",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens"
+      ]
+    },
+    {
+      "id": "gemini-3.1-flash-tts-preview",
+      "display_name": "Gemini 3.1 Flash TTS Preview",
+      "input_token_limit": 8192,
+      "output_token_limit": 16384,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3.8-flash-tts",
+      "display_name": "Gemini 3.8 Flash TTS",
+      "input_token_limit": 8192,
+      "output_token_limit": 16384,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3.8-flash-lite-tts",
+      "display_name": "Gemini 3.8 Flash Lite TTS",
+      "input_token_limit": 8192,
+      "output_token_limit": 16384,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-robotics-er-2-preview",
+      "display_name": "Gemini Robotics-ER 2 Preview",
+      "input_token_limit": 131072,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens",
+        "createCachedContent",
+        "batchGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-2.5-computer-use-preview-10-2025",
+      "display_name": "Gemini 2.5 Computer Use Preview 10-2025",
+      "input_token_limit": 131072,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens"
+      ]
+    },
+    {
+      "id": "antigravity-preview-05-2026",
+      "display_name": "Antigravity Agent Preview",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens"
+      ]
+    },
+    {
+      "id": "antigravity-preview-09-2026",
+      "display_name": "Antigravity Agent Preview",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens"
+      ]
+    },
+    {
+      "id": "antigravity-preview-latest",
+      "display_name": "Antigravity Agent Preview Latest",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens"
+      ]
+    },
+    {
+      "id": "deep-research-max-preview-04-2026",
+      "display_name": "Deep Research Max Preview (Apr-21-2026)",
+      "input_token_limit": 131072,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens"
+      ]
+    },
+    {
+      "id": "deep-research-preview-04-2026",
+      "display_name": "Deep Research Preview (Apr-21-2026)",
+      "input_token_limit": 131072,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens"
+      ]
+    },
+    {
+      "id": "deep-research-pro-preview-12-2025",
+      "display_name": "Deep Research Pro Preview (Dec-12-2025)",
+      "input_token_limit": 131072,
+      "output_token_limit": 65536,
+      "actions": [
+        "generateContent",
+        "countTokens"
+      ]
+    },
+    {
+      "id": "gemini-embedding-001",
+      "display_name": "Gemini Embedding 001",
+      "input_token_limit": 2048,
+      "output_token_limit": 1,
+      "actions": [
+        "embedContent",
+        "countTextTokens",
+        "countTokens",
+        "asyncBatchEmbedContent"
+      ]
+    },
+    {
+      "id": "gemini-embedding-2-preview",
+      "display_name": "Gemini Embedding 2 Preview",
+      "input_token_limit": 8192,
+      "output_token_limit": 1,
+      "actions": [
+        "embedContent",
+        "countTextTokens",
+        "countTokens",
+        "asyncBatchEmbedContent"
+      ]
+    },
+    {
+      "id": "gemini-embedding-2",
+      "display_name": "Gemini Embedding 2",
+      "input_token_limit": 8192,
+      "output_token_limit": 1,
+      "actions": [
+        "embedContent",
+        "countTextTokens",
+        "countTokens",
+        "asyncBatchEmbedContent"
+      ]
+    },
+    {
+      "id": "aqa",
+      "display_name": "Model that performs Attributed Question Answering.",
+      "input_token_limit": 7168,
+      "output_token_limit": 1024,
+      "actions": [
+        "generateAnswer"
+      ]
+    },
+    {
+      "id": "veo-3.1-generate-preview",
+      "display_name": "Veo 3.1",
+      "input_token_limit": 480,
+      "output_token_limit": 8192,
+      "actions": [
+        "predictLongRunning"
+      ]
+    },
+    {
+      "id": "veo-3.1-fast-generate-preview",
+      "display_name": "Veo 3.1 fast",
+      "input_token_limit": 480,
+      "output_token_limit": 8192,
+      "actions": [
+        "predictLongRunning"
+      ]
+    },
+    {
+      "id": "veo-3.1-lite-generate-preview",
+      "display_name": "Veo 3.1 lite",
+      "input_token_limit": 480,
+      "output_token_limit": 8192,
+      "actions": [
+        "predictLongRunning"
+      ]
+    },
+    {
+      "id": "gemini-3.5-transcribe-live",
+      "display_name": "Gemini 3.5 Transcribe Live",
+      "input_token_limit": 131072,
+      "output_token_limit": 65536,
+      "actions": [
+        "bidiGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-2.5-flash-native-audio-latest",
+      "display_name": "Gemini 2.5 Flash Native Audio Latest",
+      "input_token_limit": 131072,
+      "output_token_limit": 8192,
+      "actions": [
+        "countTokens",
+        "bidiGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-2.5-flash-native-audio-preview-09-2025",
+      "display_name": "Gemini 2.5 Flash Native Audio Preview 09-2025",
+      "input_token_limit": 131072,
+      "output_token_limit": 8192,
+      "actions": [
+        "countTokens",
+        "bidiGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-2.5-flash-native-audio-preview-12-2025",
+      "display_name": "Gemini 2.5 Flash Native Audio Preview 12-2025",
+      "input_token_limit": 131072,
+      "output_token_limit": 8192,
+      "actions": [
+        "countTokens",
+        "bidiGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3.1-flash-live-preview",
+      "display_name": "Gemini 3.1 Flash Live Preview",
+      "input_token_limit": 131072,
+      "output_token_limit": 65536,
+      "actions": [
+        "bidiGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3.8-live",
+      "display_name": "Gemini 3.8 Live",
+      "input_token_limit": 131072,
+      "output_token_limit": 65536,
+      "actions": [
+        "bidiGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3.8-live-extended-thinking",
+      "display_name": "Gemini 3.8 Live Extended Thinking",
+      "input_token_limit": 131072,
+      "output_token_limit": 65536,
+      "actions": [
+        "bidiGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-robotics-er-2-streaming-preview",
+      "display_name": "Gemini Robotics-ER 2 Streaming Preview",
+      "input_token_limit": 131072,
+      "output_token_limit": 65536,
+      "actions": [
+        "bidiGenerateContent"
+      ]
+    },
+    {
+      "id": "gemini-3.5-live-translate-preview",
+      "display_name": "Gemini 3.5 Live Translate Preview",
+      "input_token_limit": 16384,
+      "output_token_limit": 32768,
+      "actions": [
+        "bidiGenerateContent"
+      ]
+    },
+    {
+      "id": "lyria-realtime-exp",
+      "display_name": "Lyria Realtime Experimental",
+      "input_token_limit": 1048576,
+      "output_token_limit": 65536,
+      "actions": [
+        "bidiGenerateMusic"
+      ]
+    }
+  ],
+  "results": [
+    {
+      "model": "gemini-3.5-flash-lite",
+      "role": "ping",
+      "mode": "text",
+      "ok": true,
+      "correct": true,
+      "latency_s": 0.68,
+      "prompt_tokens": 8,
+      "output_tokens": 1,
+      "thinking_tokens": null,
+      "total_tokens": 9,
+      "model_version": "gemini-3.5-flash-lite",
+      "answer_preview": "ok"
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "role": "extractor",
+      "mode": "native",
+      "ok": true,
+      "correct": true,
+      "latency_s": 1.03,
+      "prompt_tokens": 122,
+      "output_tokens": 70,
+      "thinking_tokens": null,
+      "total_tokens": 192,
+      "model_version": "gemini-3.5-flash-lite",
+      "answer_preview": "{\n  \"first_author_surname\": \"Genheden\",\n  \"year\": 2020,\n  \"journal\": \"J Cheminform\",\n  \"doi\": \"10.1186/s13321-020-00472-1\"\n}"
+    },
+    {
+      "model": "gemini-3.5-flash-lite",
+      "role": "classifier",
+      "mode": "native",
+      "ok": true,
+      "correct": true,
+      "latency_s": 0.87,
+      "prompt_tokens": 57,
+      "output_tokens": 16,
+      "thinking_tokens": null,
+      "total_tokens": 73,
+      "model_version": "gemini-3.5-flash-lite",
+      "answer_preview": "{\n  \"doc_type\": \"regulatory_guideline\"\n}"
+    },
+    {
+      "model": "gemma-4-26b-a4b-it",
+      "role": "ping",
+      "errors": [
+        {
+          "mode": "text",
+          "error": "ServerError",
+          "message": "500 INTERNAL. {'error': {'code': 500, 'message': 'Internal error encountered.', 'status': 'INTERNAL'}}"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "model": "gemma-4-26b-a4b-it",
+      "role": "extractor",
+      "mode": "native",
+      "ok": true,
+      "correct": true,
+      "latency_s": 1.94,
+      "prompt_tokens": 122,
+      "output_tokens": 59,
+      "thinking_tokens": null,
+      "total_tokens": 181,
+      "model_version": "gemma-4-26b-a4b-it",
+      "answer_preview": "{\"first_author_surname\": \"Genheden\", \"year\": 2020, \"journal\": \"J Cheminform.\", \"doi\": \"10.1186/s13321-020-00472-1\"}"
+    },
+    {
+      "model": "gemma-4-26b-a4b-it",
+      "role": "classifier",
+      "errors": [
+        {
+          "mode": "native",
+          "error": "ServerError",
+          "message": "500 INTERNAL. {'error': {'code': 500, 'message': 'Internal error encountered.', 'status': 'INTERNAL'}}"
+        },
+        {
+          "mode": "prompt_only",
+          "error": "ServerError",
+          "message": "500 INTERNAL. {'error': {'code': 500, 'message': 'Internal error encountered.', 'status': 'INTERNAL'}}"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "model": "gemma-4-31b-it",
+      "role": "ping",
+      "errors": [
+        {
+          "mode": "text",
+          "error": "ServerError",
+          "message": "500 INTERNAL. {'error': {'code': 500, 'message': 'Internal error encountered.', 'status': 'INTERNAL'}}"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "model": "gemma-4-31b-it",
+      "role": "extractor",
+      "mode": "native",
+      "ok": true,
+      "correct": true,
+      "latency_s": 21.11,
+      "prompt_tokens": 122,
+      "output_tokens": 59,
+      "thinking_tokens": null,
+      "total_tokens": 181,
+      "model_version": "gemma-4-31b-it",
+      "answer_preview": "{\"first_author_surname\": \"Genheden\", \"year\": 2020, \"journal\": \"J Cheminform\", \"doi\": \"10.1186/s13321-020-00472-1\"}"
+    },
+    {
+      "model": "gemma-4-31b-it",
+      "role": "classifier",
+      "errors": [
+        {
+          "mode": "native",
+          "error": "ServerError",
+          "message": "500 INTERNAL. {'error': {'code': 500, 'message': 'Internal error encountered.', 'status': 'INTERNAL'}}"
+        },
+        {
+          "mode": "prompt_only",
+          "error": "ServerError",
+          "message": "500 INTERNAL. {'error': {'code': 500, 'message': 'Internal error encountered.', 'status': 'INTERNAL'}}"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "model": "gemini-3.6-flash",
+      "role": "ping",
+      "errors": [
+        {
+          "mode": "text",
+          "error": "ServerError",
+          "message": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "model": "gemini-3.6-flash",
+      "role": "extractor",
+      "errors": [
+        {
+          "mode": "native",
+          "error": "ServerError",
+          "message": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+        },
+        {
+          "mode": "prompt_only",
+          "error": "ServerError",
+          "message": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "model": "gemini-3.6-flash",
+      "role": "classifier",
+      "errors": [
+        {
+          "mode": "native",
+          "error": "ServerError",
+          "message": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+        },
+        {
+          "mode": "prompt_only",
+          "error": "ServerError",
+          "message": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "role": "ping",
+      "errors": [
+        {
+          "mode": "text",
+          "error": "ServerError",
+          "message": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "role": "extractor",
+      "errors": [
+        {
+          "mode": "native",
+          "error": "ClientError",
+          "message": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. "
+        },
+        {
+          "mode": "prompt_only",
+          "error": "ClientError",
+          "message": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. "
+        }
+      ],
+      "ok": false
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "role": "classifier",
+      "errors": [
+        {
+          "mode": "native",
+          "error": "ClientError",
+          "message": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. "
+        },
+        {
+          "mode": "prompt_only",
+          "error": "ClientError",
+          "message": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. "
+        }
+      ],
+      "ok": false
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "role": "ping",
+      "errors": [
+        {
+          "mode": "text",
+          "error": "ServerError",
+          "message": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "role": "extractor",
+      "errors": [
+        {
+          "mode": "native",
+          "error": "ServerError",
+          "message": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}"
+        },
+        {
+          "mode": "prompt_only",
+          "error": "ServerError",
+          "message": "504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Deadline expired before operation could complete.', 'status': 'DEADLINE_EXCEEDED'}}"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "role": "classifier",
+      "errors": [
+        {
+          "mode": "native",
+          "error": "ServerError",
+          "message": "504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Deadline expired before operation could complete.', 'status': 'DEADLINE_EXCEEDED'}}"
+        },
+        {
+          "mode": "prompt_only",
+          "error": "ServerError",
+          "message": "504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Deadline expired before operation could complete.', 'status': 'DEADLINE_EXCEEDED'}}"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "model": "gemini-3.1-pro-preview",
+      "role": "ping",
+      "errors": [
+        {
+          "mode": "text",
+          "error": "ClientError",
+          "message": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. "
+        }
+      ],
+      "ok": false
+    },
+    {
+      "model": "gemini-3.1-pro-preview",
+      "role": "extractor",
+      "errors": [
+        {
+          "mode": "native",
+          "error": "ClientError",
+          "message": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. "
+        },
+        {
+          "mode": "prompt_only",
+          "error": "ClientError",
+          "message": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. "
+        }
+      ],
+      "ok": false
+    },
+    {
+      "model": "gemini-3.1-pro-preview",
+      "role": "classifier",
+      "errors": [
+        {
+          "mode": "native",
+          "error": "ClientError",
+          "message": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. "
+        },
+        {
+          "mode": "prompt_only",
+          "error": "ClientError",
+          "message": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. "
+        }
+      ],
+      "ok": false
+    }
+  ]
+}

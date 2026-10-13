@@ -1,0 +1,12 @@
+[{"stream_name":"stdout","time":0.795373183,"data":"name, memory.total [MiB], driver_version\n"}
+,{"stream_name":"stdout","time":0.795415809,"data":"Tesla T4, 15360 MiB, 580.178.04\n"}
+,{"stream_name":"stdout","time":0.795421392,"data":"Tesla T4, 15360 MiB, 580.178.04\n"}
+,{"stream_name":"stdout","time":0.795425809,"data":"\n"}
+,{"stream_name":"stdout","time":11.270719307,"data":"{\"torch\": \"2.11.0+cu128\", \"cuda_available\": true, \"devices\": [{\"name\": \"Tesla T4\", \"vram_gb\": 14.6}, {\"name\": \"Tesla T4\", \"vram_gb\": 14.6}], \"fp16_matmul_tflops\": 11.2}\n"}
+,{"stream_name":"stderr","time":16.898071633,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":16.898103317,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":17.219004163,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":17.219035545,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":18.059495802,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":19.191631442,"data":"[NbConvertApp] Writing 278432 bytes to __results__.html\n"}
+]

@@ -1,0 +1,10 @@
+{
+  "schema_version": "0.1.0",
+  "route": { "id": "toy-schema-invalid", "target_id": "etoac", "title": "FORMAT ILLUSTRATION ONLY: schema-invalid on purpose (no disclaimer, unknown status)" },
+  "substances": [ { "id": "etoac", "name": "ethyl acetate", "smiles": "CCOC(C)=O", "role": "target", "sourcing": "make" } ],
+  "steps": [
+    { "id": "S1", "reaction_type": "demo",
+      "inputs": [ { "substance_id": "etoac", "coefficient": 1 } ], "outputs": [ { "substance_id": "etoac", "coefficient": 1 } ],
+      "provenance": [], "verification": [ { "check_id": "RL201", "check_version": "0.1", "status": "probably_fine" } ] }
+  ]
+}

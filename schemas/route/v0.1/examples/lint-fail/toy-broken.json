@@ -1,0 +1,114 @@
+{
+  "schema_version": "0.1.0",
+  "route": {
+    "id": "toy-broken",
+    "target_id": "etoac",
+    "title": "FORMAT ILLUSTRATION ONLY: deliberately broken toy route for route-lint tests",
+    "disclaimer": "Учебная иллюстрация формата. Маршруты не являются подтверждённой технологией и требуют экспериментальной проверки квалифицированными специалистами в лицензированных условиях."
+  },
+  "substances": [
+    {
+      "id": "etoh",
+      "name": "ethanol",
+      "smiles": "CCO",
+      "inchikey": "AAAAAAAAAAAAAA-UHFFFAOYSA-N",
+      "role": "starting_material",
+      "sourcing": "buy"
+    },
+    {
+      "id": "acoh",
+      "name": "acetic acid",
+      "smiles": "CC(=O)O",
+      "role": "starting_material",
+      "sourcing": "buy"
+    },
+    {
+      "id": "bad",
+      "name": "unparseable structure",
+      "smiles": "C1CC(",
+      "role": "reagent",
+      "sourcing": "buy"
+    },
+    {
+      "id": "etoac",
+      "name": "ethyl acetate",
+      "smiles": "CCOC(C)=O",
+      "role": "target",
+      "sourcing": "make"
+    }
+  ],
+  "steps": [
+    {
+      "id": "S1",
+      "reaction_type": "esterification",
+      "inputs": [
+        {
+          "substance_id": "acoh",
+          "coefficient": 1
+        },
+        {
+          "substance_id": "etoh",
+          "coefficient": 1
+        }
+      ],
+      "outputs": [
+        {
+          "substance_id": "etoac",
+          "coefficient": 1
+        }
+      ],
+      "provenance": [],
+      "verification": []
+    },
+    {
+      "id": "S2",
+      "reaction_type": "unknown",
+      "inputs": [
+        {
+          "substance_id": "bad",
+          "coefficient": 1
+        },
+        {
+          "substance_id": "ghost",
+          "coefficient": 1
+        }
+      ],
+      "outputs": [
+        {
+          "substance_id": "etoac",
+          "coefficient": 1
+        }
+      ],
+      "provenance": [
+        {
+          "kind": "model",
+          "ref": "format-demo"
+        }
+      ],
+      "verification": []
+    },
+    {
+      "id": "S3",
+      "reaction_type": "unknown",
+      "inputs": [
+        {
+          "substance_id": "etoh",
+          "coefficient": 1
+        }
+      ],
+      "outputs": [
+        {
+          "substance_id": "etoac",
+          "coefficient": 1
+        }
+      ],
+      "provenance": [
+        {
+          "kind": "model",
+          "ref": "format-demo"
+        }
+      ],
+      "verification": []
+    }
+  ]
+}

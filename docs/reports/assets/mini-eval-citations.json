@@ -1,0 +1,301 @@
+[
+ {
+  "checked_at": "2026-10-13T13:52:20+00:00",
+  "summary": {
+   "model": "gemini-3.5-flash-lite",
+   "kind": "api",
+   "items": 12,
+   "answered": 12,
+   "field_accuracy": {
+    "surname": 0.917,
+    "year": 1.0,
+    "journal": 1.0
+   },
+   "doi_exact_when_present": 1.0,
+   "doi_not_in_source_rate": 0.0,
+   "errors": [],
+   "retries_used": 0,
+   "median_latency_s": 11.79
+  },
+  "rows": [
+   {
+    "doi_in_text": false,
+    "error": null,
+    "retries": 0,
+    "latency_s": 36.06,
+    "parsed": true,
+    "surname": true,
+    "year": true,
+    "journal": true,
+    "doi": true,
+    "doi_not_in_source": false
+   },
+   {
+    "doi_in_text": false,
+    "error": null,
+    "retries": 0,
+    "latency_s": 12.02,
+    "parsed": true,
+    "surname": true,
+    "year": true,
+    "journal": true,
+    "doi": true,
+    "doi_not_in_source": false
+   },
+   {
+    "doi_in_text": true,
+    "error": null,
+    "retries": 0,
+    "latency_s": 9.87,
+    "parsed": true,
+    "surname": true,
+    "year": true,
+    "journal": true,
+    "doi": true,
+    "doi_not_in_source": false
+   },
+   {
+    "doi_in_text": true,
+    "error": null,
+    "retries": 0,
+    "latency_s": 4.56,
+    "parsed": true,
+    "surname": true,
+    "year": true,
+    "journal": true,
+    "doi": true,
+    "doi_not_in_source": false
+   },
+   {
+    "doi_in_text": false,
+    "error": null,
+    "retries": 0,
+    "latency_s": 13.89,
+    "parsed": true,
+    "surname": true,
+    "year": true,
+    "journal": true,
+    "doi": true,
+    "doi_not_in_source": false
+   },
+   {
+    "doi_in_text": true,
+    "error": null,
+    "retries": 0,
+    "latency_s": 6.29,
+    "parsed": true,
+    "surname": true,
+    "year": true,
+    "journal": true,
+    "doi": true,
+    "doi_not_in_source": false
+   },
+   {
+    "doi_in_text": false,
+    "error": null,
+    "retries": 0,
+    "latency_s": 38.18,
+    "parsed": true,
+    "surname": true,
+    "year": true,
+    "journal": true,
+    "doi": true,
+    "doi_not_in_source": false
+   },
+   {
+    "doi_in_text": false,
+    "error": null,
+    "retries": 0,
+    "latency_s": 10.66,
+    "parsed": true,
+    "surname": false,
+    "year": true,
+    "journal": true,
+    "doi": true,
+    "doi_not_in_source": false
+   },
+   {
+    "doi_in_text": true,
+    "error": null,
+    "retries": 0,
+    "latency_s": 11.07,
+    "parsed": true,
+    "surname": true,
+    "year": true,
+    "journal": true,
+    "doi": true,
+    "doi_not_in_source": false
+   },
+   {
+    "doi_in_text": true,
+    "error": null,
+    "retries": 0,
+    "latency_s": 11.79,
+    "parsed": true,
+    "surname": true,
+    "year": true,
+    "journal": true,
+    "doi": true,
+    "doi_not_in_source": false
+   },
+   {
+    "doi_in_text": false,
+    "error": null,
+    "retries": 0,
+    "latency_s": 18.11,
+    "parsed": true,
+    "surname": true,
+    "year": true,
+    "journal": true,
+    "doi": true,
+    "doi_not_in_source": false
+   },
+   {
+    "doi_in_text": true,
+    "error": null,
+    "retries": 0,
+    "latency_s": 7.94,
+    "parsed": true,
+    "surname": true,
+    "year": true,
+    "journal": true,
+    "doi": true,
+    "doi_not_in_source": false
+   }
+  ]
+ },
+ {
+  "checked_at": "2026-10-13T14:06:36+00:00",
+  "summary": {
+   "model": "gemma-4-26b-a4b-it",
+   "kind": "api",
+   "items": 12,
+   "answered": 4,
+   "field_accuracy": {
+    "surname": 1.0,
+    "year": 1.0,
+    "journal": 1.0
+   },
+   "doi_exact_when_present": 1.0,
+   "doi_not_in_source_rate": 0.0,
+   "errors": [
+    "504",
+    "500",
+    "500",
+    "504",
+    "500",
+    "500",
+    "500",
+    "500"
+   ],
+   "retries_used": 21,
+   "median_latency_s": 32.37
+  },
+  "rows": [
+   {
+    "doi_in_text": false,
+    "error": null,
+    "retries": 1,
+    "latency_s": 25.79,
+    "parsed": true,
+    "surname": true,
+    "year": true,
+    "journal": true,
+    "doi": true,
+    "doi_not_in_source": false
+   },
+   {
+    "doi_in_text": false,
+    "error": null,
+    "retries": 2,
+    "latency_s": 145.51,
+    "parsed": true,
+    "surname": true,
+    "year": true,
+    "journal": true,
+    "doi": true,
+    "doi_not_in_source": false
+   },
+   {
+    "doi_in_text": true,
+    "error": "504",
+    "retries": 2,
+    "latency_s": 85.62,
+    "parsed": false
+   },
+   {
+    "doi_in_text": true,
+    "error": "500",
+    "retries": 2,
+    "latency_s": 27.43,
+    "parsed": false
+   },
+   {
+    "doi_in_text": false,
+    "error": "500",
+    "retries": 2,
+    "latency_s": 180.96,
+    "parsed": false
+   },
+   {
+    "doi_in_text": true,
+    "error": "504",
+    "retries": 2,
+    "latency_s": 127.58,
+    "parsed": false
+   },
+   {
+    "doi_in_text": false,
+    "error": "500",
+    "retries": 2,
+    "latency_s": 32.37,
+    "parsed": false
+   },
+   {
+    "doi_in_text": false,
+    "error": "500",
+    "retries": 2,
+    "latency_s": 27.14,
+    "parsed": false
+   },
+   {
+    "doi_in_text": true,
+    "error": "500",
+    "retries": 2,
+    "latency_s": 69.51,
+    "parsed": false
+   },
+   {
+    "doi_in_text": true,
+    "error": null,
+    "retries": 0,
+    "latency_s": 30.29,
+    "parsed": true,
+    "surname": true,
+    "year": true,
+    "journal": true,
+    "doi": true,
+    "doi_not_in_source": false
+   },
+   {
+    "doi_in_text": false,
+    "error": "500",
+    "retries": 2,
+    "latency_s": 26.53,
+    "parsed": false
+   },
+   {
+    "doi_in_text": true,
+    "error": null,
+    "retries": 2,
+    "latency_s": 28.76,
+    "parsed": true,
+    "surname": true,
+    "year": true,
+    "journal": true,
+    "doi": true,
+    "doi_not_in_source": false
+   }
+  ]
+ }
+]

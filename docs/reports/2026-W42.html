@@ -1,0 +1,1012 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Этап 1 · synthroute</title>
+<style>
+:root{
+  --bg:#f6f5f1; --surface:#ffffff; --surface-2:#f0eee8; --ink:#1b1b1a; --ink-2:#55534d; --ink-3:#86837b;
+  --line:#e2dfd6; --accent:#c8830a; --accent-ink:#8a5a00; --accent-soft:#fbf1dc;
+  --ok:#1f7a4d; --ok-soft:#e3f3ea; --part:#9a6a00; --part-soft:#fbf0d6; --fail:#b3261e; --fail-soft:#fbe5e3;
+  --llm:#5b4bc4; --llm-soft:#ece9fb; --code:#1d6f8f; --code-soft:#e2f1f7;
+  --hero:#0d0d0c; --hero-ink:#f4f2ec; --hero-ink-2:#b9b5aa;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121211; --surface:#1b1b19; --surface-2:#242421; --ink:#ecebe6; --ink-2:#b5b2a9; --ink-3:#8a877f;
+    --line:#33322e; --accent:#e6a23c; --accent-ink:#f0bd6b; --accent-soft:#2e2615;
+    --ok:#5cc58f; --ok-soft:#16291f; --part:#e3b54f; --part-soft:#2c2414; --fail:#f07b72; --fail-soft:#311a18;
+    --llm:#a99cf5; --llm-soft:#25213f; --code:#6cc3e3; --code-soft:#14272f;
+    --hero:#0a0a09; --hero-ink:#f4f2ec; --hero-ink-2:#a9a59a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121211; --surface:#1b1b19; --surface-2:#242421; --ink:#ecebe6; --ink-2:#b5b2a9; --ink-3:#8a877f;
+  --line:#33322e; --accent:#e6a23c; --accent-ink:#f0bd6b; --accent-soft:#2e2615;
+  --ok:#5cc58f; --ok-soft:#16291f; --part:#e3b54f; --part-soft:#2c2414; --fail:#f07b72; --fail-soft:#311a18;
+  --llm:#a99cf5; --llm-soft:#25213f; --code:#6cc3e3; --code-soft:#14272f;
+  --hero:#0a0a09; --hero-ink:#f4f2ec; --hero-ink-2:#a9a59a;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--sans);-webkit-text-size-adjust:100%}
+a{color:var(--accent-ink)}
+code,pre{font-family:var(--mono);font-size:.86em}
+code{background:var(--surface-2);padding:.1em .35em;border-radius:4px}
+pre{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;line-height:1.5;margin:12px 0}
+pre code{background:none;padding:0}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+header.hero{background:var(--hero);color:var(--hero-ink);padding:44px 0 34px}
+.eyebrow{display:flex;align-items:center;gap:10px;color:var(--accent);font-weight:600;font-size:13px;letter-spacing:.02em}
+.eyebrow:before{content:"";width:28px;height:2px;background:var(--accent)}
+.hero h1{font-size:clamp(26px,4.4vw,40px);line-height:1.15;margin:14px 0 10px;letter-spacing:-.01em}
+.hero p.lead{color:var(--hero-ink-2);max-width:820px;margin:0 0 18px;font-size:16px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}
+.pill{border:1px solid #3a3934;color:var(--hero-ink-2);border-radius:999px;padding:4px 12px;font-size:13px}
+.pill a{color:var(--hero-ink)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0;border-top:2px solid var(--accent)}
+.kpi{padding:14px 14px 12px 0;border-bottom:1px solid #2c2b27}
+.kpi b{display:block;font-size:30px;line-height:1.1;letter-spacing:-.01em}
+.kpi span{color:var(--hero-ink-2);font-size:13px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;padding:28px 0 60px}
+@media (min-width:1180px){.layout{grid-template-columns:200px minmax(0,1fr)}}
+nav.toc{display:none}
+@media (min-width:1180px){nav.toc{display:block;position:sticky;top:18px;align-self:start;font-size:13px}
+  nav.toc a{display:block;color:var(--ink-2);text-decoration:none;padding:5px 0 5px 10px;border-left:2px solid var(--line)}
+  nav.toc a:hover{color:var(--ink);border-left-color:var(--accent)}}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px 22px 18px;margin-bottom:22px}
+@media (max-width:600px){section{padding:18px 14px 14px;border-radius:12px}}
+.sec-head{display:flex;gap:14px;align-items:flex-start;margin-bottom:6px}
+.num{flex:0 0 auto;width:34px;height:34px;border-radius:9px;background:var(--hero);color:var(--accent);display:grid;place-items:center;font-weight:700;font-family:var(--mono)}
+.kicker{color:var(--accent-ink);font-size:12.5px;font-weight:600}
+h2{font-size:22px;line-height:1.25;margin:2px 0 0}
+h3{font-size:16.5px;margin:22px 0 8px}
+h4{font-size:14.5px;margin:16px 0 6px}
+.goal{background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:8px;padding:10px 14px;margin:12px 0 14px}
+.note{color:var(--ink-3);font-size:13px}
+.tbl{overflow-x:auto;margin:10px 0 6px;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--surface-2);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td.c{text-align:center}
+.chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:1px 9px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.chip.ok{background:var(--ok-soft);color:var(--ok)} .chip.ok:before{content:"✓"}
+.chip.part{background:var(--part-soft);color:var(--part)} .chip.part:before{content:"◐"}
+.chip.fail{background:var(--fail-soft);color:var(--fail)} .chip.fail:before{content:"✗"}
+.chip.llm{background:var(--llm-soft);color:var(--llm)} .chip.code{background:var(--code-soft);color:var(--code)}
+.y{color:var(--ok);font-weight:700} .n{color:var(--fail);font-weight:700} .p{color:var(--part);font-weight:700}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:14px}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--surface)}
+.card h4{margin-top:0}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0}
+.flow span{background:var(--surface-2);border:1px solid var(--line);border-radius:7px;padding:3px 8px;font-size:12.5px}
+.flow span.llm{background:var(--llm-soft);border-color:transparent;color:var(--llm)}
+.flow span.code{background:var(--code-soft);border-color:transparent;color:var(--code)}
+.flow i{font-style:normal;color:var(--ink-3)}
+.lanes{overflow-x:auto;margin:12px 0}
+.lanes table{min-width:720px;font-size:12px}
+.lanes th{white-space:normal;font-size:11.5px;line-height:1.3}
+.lanes td,.lanes th{text-align:center;vertical-align:middle;padding:6px 4px}
+.lanes th.row{text-align:left;white-space:nowrap}
+.lanes td.on-llm{background:var(--llm-soft);color:var(--llm);font-weight:600}
+.lanes td.on-code{background:var(--code-soft);color:var(--code);font-weight:600}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}
+.stack{display:grid;gap:8px;margin:12px 0}
+.layer{display:grid;grid-template-columns:150px 1fr;gap:10px;align-items:stretch}
+@media (max-width:640px){.layer{grid-template-columns:1fr}}
+.layer .lbl{background:var(--hero);color:var(--hero-ink);border-radius:8px;padding:8px 10px;font-size:13px;font-weight:600}
+.layer .boxes{display:flex;flex-wrap:wrap;gap:6px}
+.layer .boxes span{border:1px solid var(--line);background:var(--surface-2);border-radius:8px;padding:6px 9px;font-size:12.5px}
+.layer .boxes span.code{background:var(--code-soft);border-color:transparent}
+.layer .boxes span.llm{background:var(--llm-soft);border-color:transparent}
+.bar{height:8px;border-radius:5px;background:var(--surface-2);overflow:hidden;min-width:90px}
+.bar>div{height:100%;background:var(--ok)}
+.mini table{table-layout:fixed}
+.mini td{padding:7px 6px}
+.mini td:first-child{width:50%}
+.mini td:nth-child(2){width:30%}
+.mini td:last-child{width:20%;white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+.mini .bar{min-width:0}
+.flow span{max-width:100%}
+pre{max-width:100%}
+ul.tight{margin:6px 0;padding-left:20px} ul.tight li{margin:3px 0}
+.callout{border:1px dashed var(--accent);border-radius:10px;padding:10px 14px;margin:14px 0;background:var(--accent-soft)}
+.callout b{color:var(--accent-ink)}
+footer{color:var(--ink-3);font-size:12.5px;padding:0 0 40px}
+.theme-btn{position:fixed;right:14px;bottom:14px;z-index:5;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:7px 12px;font:600 12.5px var(--sans);cursor:pointer}
+@media (max-width:640px){
+  #summary thead{display:none}
+  #summary tr{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;padding:10px 12px;border-bottom:1px solid var(--line)}
+  #summary tr:last-child{border-bottom:none}
+  #summary td{border:none;padding:0}
+  #summary td:nth-child(2){font-weight:600}
+  #summary td:nth-child(3),#summary td:nth-child(4){grid-column:1/-1}
+}
+.diawrap{overflow-x:auto;overflow-y:hidden;margin:10px 0 4px;-webkit-overflow-scrolling:touch}
+.dia{width:100%;height:auto;display:block;overflow:visible}
+@media (max-width:760px){.dia{min-width:880px}.diawrap{border:1px solid var(--line);border-radius:10px;padding:8px 6px}}
+.dia text{font:10.5px var(--sans);fill:var(--ink);text-anchor:middle;dominant-baseline:middle}
+.dia .t{font-weight:600}
+.dia .s{font-size:9.5px;fill:var(--ink-3)}
+.dia .s.em{font-size:10px;font-style:italic}
+.dia .st{text-anchor:start} .dia .end{text-anchor:end}
+.dia .inv{fill:var(--hero-ink,#f4f2ec)} .dia .inv2{fill:#b9b5aa;font-size:9.5px}
+.dia .ahx{fill:var(--accent)}
+.dia .hh{font-size:12px;font-weight:700;fill:var(--ink);text-anchor:start;dominant-baseline:middle}
+.dia .lbl{font-size:10px;font-weight:700;text-anchor:start}
+.dia .llmt{fill:var(--llm)} .dia .codet{fill:var(--code)}
+.dia rect{stroke-width:1}
+.dia .code{fill:var(--code-soft);stroke:none}
+.dia .llm{fill:var(--llm-soft);stroke:none}
+.dia .mlb{fill:var(--surface-2);stroke:var(--line)}
+.dia .io{fill:var(--hero);stroke:none}
+.dia .hdr{fill:var(--hero);stroke:none}
+.dia .fe,.dia .api,.dia .data{fill:var(--surface-2);stroke:var(--line)}
+.dia .lane{fill:none;stroke:var(--line);stroke-dasharray:3 4}
+.dia .lane.llm{fill:none}
+.dia .a{stroke:var(--ink-3);stroke-width:1.4;fill:none}
+.dia .a.thin{stroke-width:1;opacity:.55}
+.dia .a.loop{stroke:var(--accent);stroke-width:1.6}
+.dia .ahf{fill:var(--ink-3)}
+@media print{.theme-btn,nav.toc{display:none} section{break-inside:avoid-page} header.hero{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<button class="theme-btn" type="button" id="themeBtn" aria-label="Переключить тему">◐ тема</button>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Этап 1 · Неделя 1 · 13 октября 2026</div>
+    <h1>synthroute: от проблемы к архитектуре и первой фиче</h1>
+    <p class="lead">ИИ-платформа проектирования маршрутов синтеза фармсубстанций. <b>Итог недели:</b> разобраны проблема, рынок и данные,
+      спроектированы архитектура из 13 модулей и формат маршрута RouteSpec, выбрана первая фича (route-lint) и подтверждена спайком.
+      Подняты репозиторий с системой правил и доступ к моделям. Нестабильность бесплатного тира зафиксирована измерением.</p>
+    <div class="meta">
+      <span class="pill">Рогоза Ярослав Евгеньевич · ИТМО × Performance Engineering</span>
+      <span class="pill">Репозиторий: <a href="https://github.com/123yaroslav/synthroute">github.com/123yaroslav/synthroute</a> (приватный)</span>
+      <span class="pill">Все исходные заметки лежат в <code>docs/</code> репозитория</span>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><b>16</b><span>решений рынка разобрано · 134 источника</span></div>
+      <div class="kpi"><b>627</b><span>кандидатов бенчмарка отобрано из 3475</span></div>
+      <div class="kpi"><b>7</b><span>моделей проверено · 1 стабильна · Kaggle 2× T4</span></div>
+      <div class="kpi"><b>0%</b><span>выдуманных DOI у выбранной модели · 12 статей</span></div>
+      <div class="kpi"><b>76</b><span>правил репозитория · 8% автоматизировано</span></div>
+      <div class="kpi"><b>20/сут</b><span>реальный лимит Flash на бесплатном тире</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap layout">
+<nav class="toc" aria-label="Содержание">
+  <a href="#summary">Сводка</a>
+  <a href="#problem">1 · Проблема и метрики</a>
+  <a href="#market">2 · Рынок</a>
+  <a href="#arch">3 · Архитектура</a>
+  <a href="#env">4 · Окружение и модели</a>
+  <a href="#data">5–6 · Данные и RAG</a>
+  <a href="#feature">7 · Первая фича</a>
+  <a href="#rules">+ Инженерная база</a>
+  <a href="#fails">Что не вышло</a>
+  <a href="#plan">План и риски</a>
+  <a href="#sources">Источники</a>
+</nav>
+<main>
+
+<section id="summary">
+  <div class="sec-head"><div class="num">∑</div><div><div class="kicker">Сводная таблица</div><h2>Что пробовали, что получилось, что нет</h2></div></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Блок</th><th>Что делали</th><th>Результат</th><th>Статус</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Погружение в проблему, метрики</td><td>Разобраны процесс от медхимии до GMP, роли, регуляторика (ICH Q11, Q7, Q3A/C/D, M7, Q12), количественная «боль» (8,1 превращения на синтез, общий выход 20–44%, 182–632 кг отходов на кг АФИ), рынок мира и РФ (импортные субстанции около 70–75%). Предложены 11 метрик M1–M11 с обоснованием, 4 персоны и 4 сценария; 106 источников. Ручная базовая линия по времени в литературе не найдена</td><td><span class="chip ok">сделано</span></td></tr>
+      <tr><td>2</td><td>Анализ решений на рынке</td><td>16 решений в 5 классах (человек, коммерческие CASP, открытые движки, LLM-агенты, процесс и регуляторика), схема процесса каждого, матрица 22×11, 134 источника. Главный вывод: ни у кого нет статуса проверки и источника на уровне факта; LLM без обвязки непригодна (top-1 0,6% против 53,6%), а со сверкой догоняет специализированные модели</td><td><span class="chip ok">сделано</span></td></tr>
+      <tr><td>3</td><td>Видение и архитектура</td><td>Схема процесса с разделением «LLM / детерминированный код», компонентная архитектура, 13 модулей с входами, выходами и ожидаемым результатом, 3 ADR</td><td><span class="chip ok">сделано</span></td></tr>
+      <tr><td>4</td><td>Рабочее окружение</td><td>Репозиторий на GitHub создан и запушен, CI зелёный. Ключ AI Studio работает (62 модели). Kaggle подключён: ноутбук выполнен на 2× Tesla T4 (14,6 ГБ, 11,2 TFLOPS fp16). Отборочный проект: 4 из 4 кейсов на записи + живой прогон через Gemini, смена модели конфигом подтверждена</td><td><span class="chip ok">сделано</span></td></tr>
+      <tr><td>5</td><td>Датасеты</td><td>Ядро открытых данных с проверенными лицензиями (USPTO CC0, ORD, PaRoutes, ChEMBL 37, FDA, EMA, патенты), список исключённых по лицензии; воронка отбора бенчмарка F1–F8, квоты классов, методика проверки покрытия, контаминационные срезы; RouteSpec v0.1 + 3 примера для согласования. Сам список препаратов и расчёт покрытия ещё не выполнены</td><td><span class="chip part">частично</span></td></tr>
+      <tr><td>6</td><td>Документы для RAG</td><td>5 типов документов с извлекаемыми фактами и лицензиями, архитектура хранилища (структурное чанкование, гибридный поиск BM25 + эмбеддинги + структурный, цитаты со смещениями для проверки), обоснование RAG против fine-tuning; 150 источников по блокам 5–6</td><td><span class="chip ok">сделано</span></td></tr>
+      <tr><td>7</td><td>Первая фича</td><td>route-lint v0: детерминированная проверка маршрута с кодами диагностик. Описаны видение, архитектура и критерии готовности. Спайк на RDKit дал ожидаемый результат на 3 из 3 примеров</td><td><span class="chip ok">сделано</span></td></tr>
+      <tr><td>10</td><td>Доступ к моделям</td><td>Smoke-тест 7 моделей × 3 задачи × 2 прогона: <code>gemini-3.5-flash-lite</code> 6/6; Gemma 4 — 2/6; Flash и Pro — 0/12 (503, 429). Роль <code>extractor</code> подтверждена мини-eval на 12 статьях: <b>0 выдуманных DOI</b>. Таблица «модель → задача» заполнена. Лимиты по моделям официально не опубликованы</td><td><span class="chip part">частично</span></td></tr>
+      <tr><td>+</td><td>Правила репозитория</td><td>76 правил с ID, хуки, CI, pre-commit, валидатор правил, сабагенты-ревьюеры</td><td><span class="chip ok">сделано</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Статусы честные: «частично» означает, что часть пункта не выполнена. Причины и следующие шаги описаны в разделе «Что не вышло».</p>
+</section>
+
+<section id="problem">
+  <div class="sec-head"><div class="num">1</div><div><div class="kicker">Погружение · блок 1</div><h2>Реальная индустриальная проблема и метрики</h2></div></div>
+  <div class="goal"><b>Суть проблемы.</b> Выбор маршрута синтеза субстанции — это многокритериальная задача: стадии, выход, стоимость, надёжность сырья, безопасность, примеси, регуляторика, патенты.
+    Решать её приходится рано и при неполной информации, по данным, разбросанным между статьями, патентами и базами, причём сами данные «грязные».
+    Ценность ИИ здесь не в том, чтобы «изобрести химию», а в том, чтобы <b>быстро и с источниками свести разрозненные данные в несколько проверенных вариантов</b>, сократив время до shortlist.</div>
+
+  <h3>Как устроен процесс сегодня</h3>
+  <div class="flow"><span>Маршрут медхимии<br><small>мг–г, медхимики</small></span><i>→</i><span style="outline:2px solid var(--accent)">Разведка и выбор маршрута<br><small>процесс-химики · критерии SELECT · <b>сюда бьёт synthroute</b></small></span><i>→</i><span>Разработка процесса<br><small>г–кг · ICH Q11</small></span><i>→</i><span>Масштабирование<br><small>кг–сотни кг · lab/pilot</small></span><i>→</i><span>Трансфер<br><small>площадка, CDMO</small></span><i>→</i><span>Валидация и GMP<br><small>параметры «замораживают» за 1–2 года до запуска</small></span></div>
+  <p class="note">SELECT = Safety, Environmental, Legal (IP), Economics, Control (примеси), Throughput. Роли: процесс-химик (основной пользователь), технолог (масштаб), аналитик и QC (примеси), CMC (обоснование исходных материалов), EHS, закупки, IP, фармаколог и руководитель портфеля (решение по МНН).</p>
+
+  <h4>Регуляторика, которая определяет маршрут, и что платформа может делать детерминированно</h4>
+  <div class="tbl"><table>
+    <thead><tr><th>Документ</th><th>Что значит для маршрута</th><th>Что делает платформа</th></tr></thead>
+    <tbody>
+      <tr><td>ICH Q11 (+ Q&amp;A 2017)</td><td>выбор регуляторных исходных материалов (RSM) задаёт, где начинается «регуляторная» часть маршрута; изменения после RSM — пострегистрационные</td><td>помечать кандидатов в RSM; обоснование остаётся за экспертом</td></tr>
+      <tr><td>ICH Q7 / GMP ЕАЭС ч. II</td><td>GMP действует с момента ввода исходного материала</td><td>граница GMP на схеме</td></tr>
+      <tr><td>ICH Q3A</td><td>новый маршрут даёт новый профиль примесей, который нужно квалифицировать (пороги 0,05 / 0,10 / 0,15%)</td><td>справка о порогах; примеси не предсказываем</td></tr>
+      <tr><td>ICH Q3C</td><td>классы растворителей 1–3; класс 1 в маршруте — красный флаг</td><td>автоматический флаг класса растворителя на стадии</td></tr>
+      <tr><td>ICH Q3D</td><td>металлы катализаторов (например, Pd — класс 2B) требуют оценки риска, особенно на поздних стадиях</td><td>флаг элемента, класса и расстояния до АФИ</td></tr>
+      <tr><td>ICH M7 + нитрозамины</td><td>структурные алерты на поздних стадиях — главный регуляторный риск маршрута</td><td>информационные флаги алертов (не вердикт)</td></tr>
+      <tr><td>Q12, патенты</td><td>ошибка в маршруте дорого стоит после регистрации; процессные патенты действуют отдельно от патентов на вещество</td><td>версии и diff маршрута; патентный статус — справка с источником</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Почему это трудно: количественные данные</h3>
+  <div class="kpis" style="border-top-color:var(--accent);grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">
+    <div class="kpi" style="border-bottom-color:var(--line)"><b style="color:var(--ink)">8,1</b><span style="color:var(--ink-2)">превращения в среднем на синтез кандидата (128 синтезов GSK, AZ, Pfizer), из них 21% — защиты и их снятие</span></div>
+    <div class="kpi" style="border-bottom-color:var(--line)"><b style="color:var(--ink)">20 / 35 / 44%</b><span style="color:var(--ink-2)">общий выход: ранняя, поздняя, коммерческая стадия (97 процессов, iGAL 2.0)</span></div>
+    <div class="kpi" style="border-bottom-color:var(--line)"><b style="color:var(--ink)">632 → 182</b><span style="color:var(--ink-2)">кг отходов на кг АФИ (ранняя → коммерческая); менее 1% сырья входит в АФИ</span></div>
+    <div class="kpi" style="border-bottom-color:var(--line)"><b style="color:var(--ink)">80–90%</b><span style="color:var(--ink-2)">массы процесса приходится на растворители; типичный PMI 168–308 кг/кг</span></div>
+    <div class="kpi" style="border-bottom-color:var(--line)"><b style="color:var(--ink)">20–30%</b><span style="color:var(--ink-2)">цены готового генерика приходится на АФИ (встречаются оценки &gt;50%)</span></div>
+    <div class="kpi" style="border-bottom-color:var(--line)"><b style="color:var(--ink)">&lt; 12%</b><span style="color:var(--ink-2)">одностадийных реакций в Reaxys сбалансированы: данные «грязные» по природе</span></div>
+  </div>
+  <div class="grid2" style="margin-top:14px">
+    <div class="card"><h4>Выход перемножается по стадиям (при 86% на стадию)</h4>
+      <div class="tbl mini" style="border:none;margin:0"><table><tbody>
+        <tr><td>4 стадии</td><td style="width:60%"><div class="bar"><div style="width:54.7%"></div></div></td><td>55%</td></tr>
+        <tr><td>8 стадий</td><td><div class="bar"><div style="width:29.9%;background:var(--part)"></div></div></td><td>30%</td></tr>
+        <tr><td>12 стадий</td><td><div class="bar"><div style="width:16.4%;background:var(--fail)"></div></div></td><td>16%</td></tr>
+      </tbody></table></div>
+      <p class="note">Наш расчёт 0,86ⁿ по среднему коммерческому выходу стадии 86% [iGAL 2.0]. Поэтому одна убранная стадия стоит дорого.</p></div>
+    <div class="card"><h4>Конфликтующие цели</h4><ul class="tight">
+      <li><b>Короткий маршрут или регуляторика:</b> экономика тянет к короткой GMP-части, а Q11 требует достаточно стадий после RSM.</li>
+      <li><b>Цена или надёжность поставок:</b> самые дешёвые исходные материалы часто поступают от одного источника.</li>
+      <li><b>Безопасность или производительность:</b> опасные стадии трудно масштабировать.</li>
+      <li><b>Генерик или патенты:</b> патент на вещество истёк, а процессные патенты действуют.</li>
+    </ul><p class="note">Вывод: «лучшей» схемы нет, есть Парето-множество. Поэтому платформа выдаёт <b>несколько</b> вариантов с прозрачным сравнением.</p></div>
+  </div>
+  <p class="note"><b>Не подтверждено:</b> опубликованных данных о длительности ручной разведки маршрута нет. Базовую линию по времени нужно измерить самим вместе с экспертом (метрики M7, M10).</p>
+
+  <h3>Рынок: почему именно сейчас</h3>
+  <div class="grid2">
+    <div class="card"><h4>Мир</h4><ul class="tight">
+      <li><b>Волна генериков:</b> более $500 млрд продаж под риском генерической конкуренции в 2026–2032 гг. (Evaluate).</li>
+      <li><b>Концентрация поставок:</b> 60–80% АФИ для дженериков в Европе производятся в Индии или Китае; ключевые исходные материалы часто из Китая.</li>
+      <li><b>Политика устойчивости поставок</b> в США, ЕС и Индии подталкивает к перепроектированию маршрутов от более доступного сырья.</li>
+      <li><b>Дефектура:</b> 227 активных дефектур в США во II кв. 2026 г.</li>
+    </ul></div>
+    <div class="card"><h4>Россия</h4><ul class="tight">
+      <li>Импортные субстанции занимают около <b>70–75%</b> рынка (ФБУ «ГИЛС и НП», 2024).</li>
+      <li>Отечественные производители обычно выполняют лишь <b>последние 3–4 стадии из 7–15</b> (оценка отраслевого эксперта).</li>
+      <li>«Фарма-2030»: цель — <b>80%</b> стратегически значимых ЛП полного цикла, включая синтез молекулы, к 2030 г. (67,4% в 2022 г.).</li>
+      <li>Отсюда сценарий «локализация вглубь»: начать маршрут от более ранних и доступных исходных веществ. Это главный дифференциатор для российского рынка.</li>
+    </ul></div>
+  </div>
+
+  <h3>Что ИИ может и чего не может</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Может (есть доказательства)</th><th>Не может (и не должен заявлять)</th></tr></thead>
+    <tbody>
+      <tr><td>За минуты свести литературу, патенты и базы в несколько вариантов со ссылками; инструменты поиска резко снижают ошибки</td><td>Гарантировать осуществимость, выход и условия на масштабе</td></tr>
+      <tr><td>Предлагать стратегии, сопоставимые с литературными: 45 химиков вслепую, 43% против 57%, p = 0,26</td><td>Предсказать профиль примесей, полиморф, тепловую безопасность</td></tr>
+      <tr><td>Быстро проверять детерминированные свойства: структуры, баланс, сток, классы Q3C и Q3D, алерты</td><td>Дать регуляторное обоснование RSM или юридическое заключение</td></tr>
+      <tr><td>Считать и сравнивать метрики: стадии, оценку PMI, конвергентность</td><td>Быть единственным судьёй качества: LLM-судья не замечает ошибок</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note"><b>Отказы LLM, измеренные в литературе:</b> выдуманы 55% ссылок GPT-3.5 и 18% GPT-4; у GPT-4o 45% реальных ссылок содержат ошибки, чаще всего в DOI. Top-1 ретросинтеза у GPT-4 0,6–11% против 53,6% у специализированной модели при 11–21% невалидных SMILES. Отсюда позиционирование: <b>LLM предлагает, инструменты проверяют, эксперт решает.</b></p>
+
+  <h3>Метрики: как измерим, что решение решает проблему</h3>
+  <p class="note">Конфигурации сравнения: B0 — LLM без обвязки с тем же бюджетом, B1 — шаблонный ретросинтез (AiZynthFinder), B2 — LLM + RAG, S0 — полная система. Для каждой конфигурации ≥ 3 прогонов и 95% bootstrap CI. LLM-судья в основных метриках не используется.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>#</th><th>Метрика</th><th>Как измеряем</th><th>Почему именно она</th><th>Цель</th></tr></thead>
+    <tbody>
+      <tr><td colspan="5"><b>Качество</b></td></tr>
+      <tr><td>M1</td><td><b>Доля валидных стадий</b></td><td>route-lint по всем стадиям, с разбивкой по проверкам</td><td>прямая мера главного риска: правдоподобных, но невалидных стадий</td><td>S0 &gt; B0 с непересекающимися CI; абсолютная цель — после замера B0</td></tr>
+      <tr><td>M2</td><td>Recall известных маршрутов @k</td><td>замороженный тест-сет; совпадение по ключевым интермедиатам (InChIKey)</td><td>система находит уже известное, то есть решает фрагментацию данных</td><td>после замера; ориентир PaRoutes top-10 0,42–0,61</td></tr>
+      <tr><td>M3</td><td>Доля технически осмысленных маршрутов</td><td>слепая экспертная оценка вперемешку с литературными</td><td>многокритериальную пригодность оценивает только эксперт</td><td>не хуже литературных маршрутов</td></tr>
+      <tr><td>M4</td><td>Число действительно разных стратегий</td><td>расстояние между деревьями маршрутов, кластеры</td><td>пользователю нужны альтернативы, а не 5 копий</td><td>после согласования определения с экспертом</td></tr>
+      <tr><td>M5</td><td><b>Доля утверждений с проверяемым источником</b></td><td>DOI или патент существует и цитата найдена в тексте; аудит выборки</td><td>профессионал должен за секунды понять, чему верить</td><td>после замера</td></tr>
+      <tr><td>M6</td><td>Доля галлюцинированных ссылок</td><td>отдельно для сырого вывода и для показанного пользователю</td><td>в литературе 18–55% выдуманных ссылок у LLM</td><td>0% среди показанных со статусом «литература»</td></tr>
+      <tr><td colspan="5"><b>Эффективность</b></td></tr>
+      <tr><td>M7</td><td>Время до первого набора вариантов</td><td>трассы; ручная базовая линия — хронометраж эксперта</td><td>время до shortlist — основная боль</td><td>≤ 20 мин на МНН (уровень CASP)</td></tr>
+      <tr><td>M8</td><td>Стоимость одного валидного маршрута</td><td>токены и $ из трасс gateway</td><td>точность без учёта стоимости вводит в заблуждение</td><td>S0 доминирует B0 по Парето</td></tr>
+      <tr><td colspan="5"><b>Удобство и бизнес</b></td></tr>
+      <tr><td>M9</td><td>SUS (System Usability Scale)</td><td>анкета после сценариев, 5–8 экспертов</td><td>пользователи — не программисты</td><td>≥ 68 (средний SUS)</td></tr>
+      <tr><td>M10</td><td>Сэкономленные часы эксперта на МНН</td><td>парный хронометраж</td><td>перевод ценности в деньги</td><td>после замера базовой линии</td></tr>
+      <tr><td>M11</td><td>Корректность гейта и наличие дисклеймера</td><td>тесты на синтетических фикстурах</td><td>ограничитель: нарушение недопустимо</td><td>100%</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Пользователи и сценарии (гипотеза, проверяется интервью)</h3>
+  <div class="grid2">
+    <div class="card"><h4>П1 · Процесс-химик (генерики, CDMO)</h4><p>Хочет за дни, а не за недели получить 3–5 маршрутов с источниками и рисками. <b>Сценарий S1:</b> МНН → варианты → таблица сравнения → экспорт.</p></div>
+    <div class="card"><h4>П2 · Технолог (масштабирование)</h4><p>Растворители, металлы, опасности, PMI. <b>Сценарий S3:</b> режим pilot, затем «замени растворитель класса 2 на стадии N» → новая версия с diff и перепроверкой.</p></div>
+    <div class="card"><h4>П3 · Фармаколог, руководитель портфеля</h4><p>Быстрая оценка сложности субстанции. <b>Сценарий S2:</b> «локализация вглубь» — ограничение по доступному сырью → маршруты от более ранних исходных веществ.</p></div>
+    <div class="card"><h4>П4 · Регуляторика (CMC)</h4><p>Граница GMP, кандидаты в RSM, трассируемость фактов. <b>Сценарий S4:</b> PDF для техсовета со статусами доверия и дисклеймером.</p></div>
+  </div>
+  <p class="note">Полный текст со 106 источниками: <code>docs/research/01-problem-and-metrics.md</code>.</p>
+</section>
+
+<section id="market">
+  <div class="sec-head"><div class="num">2</div><div><div class="kicker">Рынок · блок 2</div><h2>Как задачу решают сейчас: 16 решений в 5 классах</h2></div></div>
+  <div class="goal"><b>Главный вывод.</b> Генераторов маршрутов много, и они находят «формально замкнутый» маршрут для большинства целей.
+    Но <b>ни один не связывает каждый факт маршрута с источником и статусом проверки</b>: ни коммерческий CASP, ни открытый движок, ни LLM-агент.
+    Условия, масштаб и регуляторика живут в отдельных инструментах, которым нужен уже готовый маршрут. Этот связующий слой и есть ниша проекта.</div>
+
+  <h3>Доказательная база: почему «одна LLM» не работает, а «LLM + проверки» работает</h3>
+  <div class="grid2">
+    <div class="card">
+      <h4>LLM без обвязки vs специализированные модели</h4>
+      <div class="tbl mini" style="border:none;margin:0"><table>
+        <tbody>
+          <tr><td>Top-1 ретросинтеза, USPTO-50K: GPT-4 zero-shot</td><td><div class="bar"><div style="width:1.1%;background:var(--fail)"></div></div></td><td>0,6%</td></tr>
+          <tr><td>Chemformer (специализированная)</td><td><div class="bar"><div style="width:53.6%"></div></div></td><td>53,6%</td></tr>
+          <tr><td>Solve rate, Pistachio Hard: gpt-4o</td><td><div class="bar"><div style="width:60%;background:var(--part)"></div></div></td><td>60</td></tr>
+          <tr><td>deepseek-R1</td><td><div class="bar"><div style="width:42%;background:var(--part)"></div></div></td><td>42</td></tr>
+          <tr><td>RootAligned + MCTS</td><td><div class="bar"><div style="width:83%"></div></div></td><td>83</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">Guo et al., NeurIPS 2023 D&amp;B (20,6% невалидных SMILES у GPT-4); «Evaluating LLMs in Scientific Discovery», 2025: отставание «due to frequent failures in molecule or reaction validity checks».</p>
+    </div>
+    <div class="card">
+      <h4>Те же LLM с детерминированной сверкой</h4>
+      <div class="tbl mini" style="border:none;margin:0"><table>
+        <tbody>
+          <tr><td>LLM-Syn-Planner, USPTO-190, N=100</td><td><div class="bar"><div style="width:64.7%;background:var(--part)"></div></div></td><td>64,7</td></tr>
+          <tr><td>AOT* (LLM + сверка с 270 тыс. шаблонов), N=100</td><td><div class="bar"><div style="width:86.3%"></div></div></td><td>86,3</td></tr>
+          <tr><td>RootAligned + Retro* (специализированная)</td><td><div class="bar"><div style="width:86.8%"></div></div></td><td>86,8</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">ICML 2025; Findings of ACL 2026. Сверка с шаблонами и RDKit выравнивает LLM со специализированными моделями. Это прямое подтверждение нашего ADR-0002. Числа заявлены самими авторами.</p>
+    </div>
+    <div class="card">
+      <h4>«Решено» ≠ «так делают на практике» (PaRoutes 2.0)</h4>
+      <div class="tbl mini" style="border:none;margin:0"><table>
+        <tbody>
+          <tr><td>MCTS, n1: целей решено</td><td><div class="bar"><div style="width:97.2%"></div></div></td><td>97,2%</td></tr>
+          <tr><td>эталонный маршрут на 1-м месте</td><td><div class="bar"><div style="width:23.7%;background:var(--fail)"></div></div></td><td>23,7%</td></tr>
+          <tr><td>MCTS, n5: целей решено</td><td><div class="bar"><div style="width:96.9%"></div></div></td><td>96,9%</td></tr>
+          <tr><td>эталонный маршрут на 1-м месте</td><td><div class="bar"><div style="width:12.4%;background:var(--fail)"></div></div></td><td>12,4%</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">Таблица репозитория PaRoutes, проверено 13.10.2026. Поэтому solve rate непригоден как главная метрика: нужны проверяемость стадий и экспертная оценка.</p>
+    </div>
+    <div class="card">
+      <h4>Что ещё показывают независимые оценки</h4>
+      <ul class="tight">
+        <li><b>LLM-судья ненадёжен:</b> «GPT-4 as an evaluator cannot distinguish between clearly wrong GPT-4 completions» (ChemCrow, Nat Mach Intell 2024); у моделей систематические оптимистичные и пессимистичные смещения (Digital Discovery 2026).</li>
+        <li><b>Рейтинги моделей меняются</b> при строгом протоколе; вне домена обучения top-50 &lt; 55% (Syntheseus, Faraday Discuss. 2025).</li>
+        <li><b>Выдуманные ссылки:</b> 55% у GPT-3.5 и 18% у GPT-4 (Sci Rep 2023, не только химия). Измерений для химии нет, это ниша нашей метрики проверки цитат.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Архитектура решений: шесть архетипов</h3>
+  <p class="note">Все 16 разобранных решений сводятся к шести конвейерам. <span class="chip code">детерминированный шаг</span> <span class="chip llm">шаг LLM</span>, серый — обученная ML-модель. Ниже каждое решение показано отдельно с доказательствами.</p>
+  <div class="diawrap"><svg class="dia" viewBox="0 0 1180 702" role="img" aria-label="Шесть архитектурных архетипов решений рынка"><title>Шесть архитектурных архетипов решений рынка</title><desc>Каждое из разобранных решений сводится к одному из шести конвейеров.</desc><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" class="ahf"/></marker><marker id="ahx" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" class="ahx"/></marker></defs><text class="hh" x="0" y="36">A. Экспертные правила</text><text class="s end" x="1180" y="36">SYNTHIA · RetroBioCat</text><rect class="code" x="0" y="44" width="215.2" height="44" rx="7"/><text class="t" x="107.6" y="69.5">структура цели</text><path class="a" d="M217.2,66 L238.2,66" marker-end="url(#ah)"/><rect class="code" x="241.2" y="44" width="215.2" height="44" rx="7"/><text class="t" x="348.79999999999995" y="69.5">база экспертных правил</text><path class="a" d="M458.4,66 L479.4,66" marker-end="url(#ah)"/><rect class="code" x="482.4" y="44" width="215.2" height="44" rx="7"/><text class="t" x="590.0" y="69.5">поиск по графу с отсечением</text><path class="a" d="M699.5999999999999,66 L720.5999999999999,66" marker-end="url(#ah)"/><rect class="code" x="723.5999999999999" y="44" width="215.2" height="44" rx="7"/><text class="t" x="831.1999999999999" y="69.5">стоп на каталоге сырья</text><path class="a" d="M940.8,66 L961.8,66" marker-end="url(#ah)"/><rect class="code" x="964.8" y="44" width="215.2" height="44" rx="7"/><text class="t" x="1072.3999999999999" y="69.5">ранжирование</text><text class="s st" x="0" y="106">Интерпретируемо, есть лабораторная валидация. Правила пишутся вручную, покрытие ограничено.</text><text class="hh" x="0" y="148">B. Шаблонный ML + поиск</text><text class="s end" x="1180" y="148">AiZynthFinder · ASKCOS · Spaya · Reaxys</text><rect class="code" x="0" y="156" width="175.0" height="44" rx="7"/><text class="t" x="87.5" y="181.5">структура цели</text><path class="a" d="M177.0,178 L198.0,178" marker-end="url(#ah)"/><rect class="mlb" x="201.0" y="156" width="175.0" height="44" rx="7"/><text class="t" x="288.5" y="175.0">нейросеть ранжирует</text><text class="t" x="288.5" y="188.0">шаблоны</text><path class="a" d="M378.0,178 L399.0,178" marker-end="url(#ah)"/><rect class="mlb" x="402.0" y="156" width="175.0" height="44" rx="7"/><text class="t" x="489.5" y="181.5">фильтр реализуемости</text><path class="a" d="M579.0,178 L600.0,178" marker-end="url(#ah)"/><rect class="code" x="603.0" y="156" width="175.0" height="44" rx="7"/><text class="t" x="690.5" y="181.5">MCTS / Retro*</text><path class="a" d="M780.0,178 L801.0,178" marker-end="url(#ah)"/><rect class="code" x="804.0" y="156" width="175.0" height="44" rx="7"/><text class="t" x="891.5" y="181.5">сток покупаемых</text><path class="a" d="M981.0,178 L1002.0,178" marker-end="url(#ah)"/><rect class="code" x="1005.0" y="156" width="175.0" height="44" rx="7"/><text class="t" x="1092.5" y="181.5">скоринг маршрута</text><text class="s st" x="0" y="218">Самый массовый класс. Условия, масштаб и источники не выводятся.</text><text class="hh" x="0" y="260">C. Трансформер (seq2seq)</text><text class="s end" x="1180" y="260">IBM RXN · Chemformer · RetroChimera</text><rect class="code" x="0" y="268" width="215.2" height="44" rx="7"/><text class="t" x="107.6" y="293.5">SMILES цели</text><path class="a" d="M217.2,290 L238.2,290" marker-end="url(#ah)"/><rect class="mlb" x="241.2" y="268" width="215.2" height="44" rx="7"/><text class="t" x="348.79999999999995" y="287.0">трансформер предсказывает</text><text class="t" x="348.79999999999995" y="300.0">предшественников</text><path class="a" d="M458.4,290 L479.4,290" marker-end="url(#ah)"/><rect class="code" x="482.4" y="268" width="215.2" height="44" rx="7"/><text class="t" x="590.0" y="293.5">поиск по гиперграфу</text><path class="a" d="M699.5999999999999,290 L720.5999999999999,290" marker-end="url(#ah)"/><rect class="mlb" x="723.5999999999999" y="268" width="215.2" height="44" rx="7"/><text class="t" x="831.1999999999999" y="293.5">round-trip прямой моделью</text><path class="a" d="M940.8,290 L961.8,290" marker-end="url(#ah)"/><rect class="code" x="964.8" y="268" width="215.2" height="44" rx="7"/><text class="t" x="1072.3999999999999" y="293.5">ранжирование</text><text class="s st" x="0" y="330">Сильное прямое предсказание даёт обратную проверку. «Чёрный ящик», ссылок нет.</text><text class="hh" x="0" y="372">D. Литературный поиск + предсказание</text><text class="s end" x="1180" y="372">CAS SciFinder · Reaxys Combined</text><rect class="code" x="0" y="380" width="215.2" height="44" rx="7"/><text class="t" x="107.6" y="405.5">цель</text><path class="a" d="M217.2,402 L238.2,402" marker-end="url(#ah)"/><rect class="code" x="241.2" y="380" width="215.2" height="44" rx="7"/><text class="t" x="348.79999999999995" y="399.0">поиск стадий в курированной</text><text class="t" x="348.79999999999995" y="412.0">базе</text><path class="a" d="M458.4,402 L479.4,402" marker-end="url(#ah)"/><rect class="mlb" x="482.4" y="380" width="215.2" height="44" rx="7"/><text class="t" x="590.0" y="405.5">предсказанные стадии правилами</text><path class="a" d="M699.5999999999999,402 L720.5999999999999,402" marker-end="url(#ah)"/><rect class="code" x="723.5999999999999" y="380" width="215.2" height="44" rx="7"/><text class="t" x="831.1999999999999" y="405.5">дерево с лимитами цены</text><path class="a" d="M940.8,402 L961.8,402" marker-end="url(#ah)"/><rect class="code" x="964.8" y="380" width="215.2" height="44" rx="7"/><text class="t" x="1072.3999999999999" y="405.5">план со ссылками</text><text class="s st" x="0" y="442">Единственные, кто показывает первоисточник стадии. Закрыто подпиской, выгрузки нет.</text><text class="hh" x="0" y="484">E. LLM-агент с инструментами</text><text class="s end" x="1180" y="484">ChemCrow · Coscientist · DeepRetro · steer</text><rect class="code" x="0" y="492" width="215.2" height="44" rx="7"/><text class="t" x="107.6" y="517.5">запрос</text><path class="a" d="M217.2,514 L238.2,514" marker-end="url(#ah)"/><rect class="llm" x="241.2" y="492" width="215.2" height="44" rx="7"/><text class="t" x="348.79999999999995" y="517.5">LLM-планировщик (ReAct)</text><path class="a" d="M458.4,514 L479.4,514" marker-end="url(#ah)"/><rect class="mlb" x="482.4" y="492" width="215.2" height="44" rx="7"/><text class="t" x="590.0" y="517.5">вызов инструмента</text><path class="a" d="M699.5999999999999,514 L720.5999999999999,514" marker-end="url(#ah)"/><rect class="mlb" x="723.5999999999999" y="492" width="215.2" height="44" rx="7"/><text class="t" x="831.1999999999999" y="517.5">наблюдение в цикл</text><path class="a" d="M940.8,514 L961.8,514" marker-end="url(#ah)"/><rect class="llm" x="964.8" y="492" width="215.2" height="44" rx="7"/><text class="t" x="1072.3999999999999" y="517.5">ответ</text><text class="s st" x="0" y="554">Диалог и объяснения. Нет статуса проверки у факта, LLM-судья ненадёжен.</text><text class="hh" x="0" y="596">F. Регуляторная проверка</text><text class="s end" x="1180" y="596">Lhasa Mirabilis · Derek/Sarah</text><rect class="code" x="0" y="604" width="275.5" height="44" rx="7"/><text class="t" x="137.75" y="629.5">готовая схема от человека</text><path class="a" d="M277.5,626 L298.5,626" marker-end="url(#ah)"/><rect class="code" x="301.5" y="604" width="275.5" height="44" rx="7"/><text class="t" x="439.25" y="629.5">предсказание фактора очистки</text><path class="a" d="M579.0,626 L600.0,626" marker-end="url(#ah)"/><rect class="code" x="603.0" y="604" width="275.5" height="44" rx="7"/><text class="t" x="740.75" y="629.5">сравнение с требуемым</text><path class="a" d="M880.5,626 L901.5,626" marker-end="url(#ah)"/><rect class="code" x="904.5" y="604" width="275.5" height="44" rx="7"/><text class="t" x="1042.25" y="629.5">опция контроля ICH M7</text><text class="s st" x="0" y="666">Единственные, кто принимает маршрут и выдаёт формализованный вердикт. Маршруты не генерируют.</text></svg></div>
+
+  <h3>Решения и их архитектура (схема процесса каждого)</h3>
+  <p class="legend"><span class="chip llm">шаг LLM</span> <span class="chip code">детерминированный / ML-движок</span> · доказательства: <b>IND</b> независимые, <b>DEV</b> от разработчиков, <b>VENDOR</b> маркетинг вендора</p>
+
+  <h4>0 · Человек (ручной baseline)</h4>
+  <div class="card">
+    <b>Химик + CAS SciFinder / Reaxys, route scouting в CDMO</b>
+    <div class="flow"><span>МНН / структура</span><i>→</i><span>ретросинтетические идеи эксперта</span><i>→</i><span>поиск прецедентов в базах</span><i>→</i><span>отбор 2–4 по SELECT (Safety, Environment, Legal, Economics, Control, Throughput)</span><i>→</i><span>feasibility в лаборатории</span><i>→</i><span>демо-партия: примеси, безопасность</span><i>→</i><span>масштабирование</span></div>
+    <p><b>Эффективность:</b> публичных измерений стоимости и длительности route scouting нет. Нормативы CDMO: 1,5 недели на стадию для исходных материалов и 2,5 недели на стадию АФИ (WuXi STA). В слепых тестах компьютерные маршруты признаются «эквивалентными литературным». <b>Плюсы:</b> учитывает неформализуемое, человек несёт ответственность. <b>Минусы:</b> дорого и медленно, охват литературы ограничен, знание не документируется в машинном виде.</p>
+  </div>
+
+  <h4>1 · Коммерческие CASP</h4>
+  <div class="grid2">
+    <div class="card"><b>SYNTHIA (Merck KGaA)</b> · подписка, академический тариф 1 049 €
+      <div class="flow"><span class="code">структура</span><i>→</i><span class="code">110 000+ экспертных правил</span><i>→</i><span class="code">поиск по графу с отсечением</span><i>→</i><span class="code">12M+ коммерческих веществ</span><i>→</i><span class="code">ранжирование</span><i>→</i><span>UI / API</span></div>
+      <p><b>DEV:</b> маршруты для 8 целей выполнены в лаборатории (Chem 2018); в Turing-подобном тесте неотличимы от человеческих (Nature 2020). Независимых бенчмарков нет.</p></div>
+    <div class="card"><b>CAS SciFinder Retrosynthesis + CAS Newton</b> · подписка
+      <div class="flow"><span class="code">цель</span><i>→</i><span class="code">стадии из ≈121M реакций CAS</span><i>→</i><span class="code">предсказанные стадии</span><i>→</i><span class="code">дерево с лимитами цены</span><i>→</i><span>план со ссылками</span><i>→</i><span class="llm">агент Newton</span></div>
+      <p><b>VENDOR:</b> метрик точности нет. <b>Плюс:</b> у литературных стадий есть ссылки на первоисточник. <b>Минус:</b> метод закрыт, выгрузки в открытый формат нет.</p></div>
+    <div class="card"><b>Reaxys Predictive Retrosynthesis</b> (движки Pending.AI, Iktos)
+      <div class="flow"><span class="code">цель</span><i>→</i><span class="code">нейросеть ранжирует разрывы</span><i>→</i><span class="code">правило + фильтр реализуемости</span><i>→</i><span class="code">MCTS до 150M веществ</span><i>→</i><span>маршруты + прецеденты</span></div>
+      <p><b>VENDOR:</b> маршрут для «&gt;90%» drug-like молекул; кейс Lonza: в 5 из 6 случаев маршрут короче. Основа метода (Segler, Nature 2018): в двойном слепом тесте «equivalent to reported literature routes».</p></div>
+    <div class="card"><b>Iktos Spaya</b> · SaaS / VPC
+      <div class="flow"><span class="code">SMILES</span><i>→</i><span class="code">шаблонная сеть (6M реакций)</span><i>→</i><span class="code">MCTS + RL</span><i>→</i><span class="code">RScore</span><i>→</i><span>UI / batch API</span></div>
+      <p><b>DEV:</b> ROC-AUC RScore 1,0 на 30 молекулах (выборка мала, признают сами авторы); около 66% ChEMBL получают RScore ≥ 0,5.</p></div>
+    <div class="card"><b>IBM RXN for Chemistry → rxn-sandbox</b>
+      <div class="flow"><span class="code">SMILES</span><i>→</i><span class="code">трансформер (одностадийный)</span><i>→</i><span class="code">поиск по гиперграфу</span><i>→</i><span class="code">round-trip прямой моделью</span><i>→</i><span>процедура / API</span></div>
+      <p><b>IND:</b> прямое предсказание top-1 &gt; 90% (USPTO_MIT); 87,5% против 76,5% у лучшего человека. <b>Хостинг и API отключаются 28.10.2026</b> (проверено); остаётся self-hosted <code>rxn-sandbox</code>.</p></div>
+    <div class="card"><b>ChemAIRS (Chemical.AI)</b> · подписка / on-prem
+      <div class="flow"><span class="code">SMILES</span><i>→</i><span class="code">ML + правила, ≈80M реакций</span><i>→</i><span class="code">цены сырья онлайн</span><i>→</i><span class="code">ранжирование</span><i>→</i><span>условия · примеси · процесс</span></div>
+      <p><b>VENDOR only:</b> «1-е место из 9 CASP» без названий конкурентов, прогноз примесей «&gt;90%». Самый широкий процессный набор, но независимой валидации нет.</p></div>
+  </div>
+
+  <h4>2 · Открытые движки</h4>
+  <div class="grid2">
+    <div class="card"><b>AiZynthFinder (AstraZeneca)</b> · MIT, v4.4.1
+      <div class="flow"><span class="code">политика ранжирует шаблоны</span><i>→</i><span class="code">применение + фильтр</span><i>→</i><span class="code">MCTS / Retro* / DFPN</span><i>→</i><span class="code">сток (ZINC)</span><i>→</i><span class="code">скоринг, кластеры</span></div>
+      <p><b>DEV:</b> решено 80–86% (внутренние наборы AZ), 71% ChEMBL, ≈10% GDB; медиана около 40 с на цель. <b>IND:</b> 67% и 58% против 94% и 82% у PostEra. Для нас это baseline B1.</p></div>
+    <div class="card"><b>ASKCOS v2 (MIT)</b> · MIT, Docker, x86, ≥ 32 GB RAM
+      <div class="flow"><span class="code">цель + стратегия</span><i>→</i><span class="code">4 одностадийные модели</span><i>→</i><span class="code">MCTS / Retro*</span><i>→</i><span class="code">условия, примеси, селективность</span><i>→</i><span>интерактивный планировщик · MCP</span></div>
+      <p><b>DEV:</b> развёрнут в десятках фармкомпаний; 75 одобренных FDA молекул 2019–2023 — около минуты на цель. Ближайший открытый ориентир по набору функций. Сами авторы признают, что оценка выделения и очистки «remains elusive».</p></div>
+    <div class="card"><b>Syntheseus (Microsoft)</b> · MIT, библиотека бенчмаркинга
+      <div class="flow"><span class="code">обёртки 8 моделей</span><i>→</i><span class="code">строгая одностадийная оценка</span><i>→</i><span class="code">многостадийный поиск под бюджет</span><i>→</i><span>метрики</span></div>
+      <p><b>IND:</b> пересчитанный top-1 на USPTO-50K от 48,7 до 56,0; рейтинги меняются; вне домена top-50 &lt; 55%. Авторы прямо пишут, что отсутствие условий, оборудования и очистки — барьер, который библиотека не решает.</p></div>
+    <div class="card"><b>RetroBioCat / rbc2</b> · биокатализ; v2 под CC BY-NC
+      <div class="flow"><span class="code">SMILES</span><i>→</i><span class="code">ферментативные правила (99)</span><i>→</i><span class="code">поиск прецедента фермента</span><i>→</i><span class="code">скоринг путей</span></div>
+      <p><b>DEV:</b> на 52 литературных каскадах предсказаны все реакции, кроме окисления P450. Единственный широко используемый планировщик с биокатализом.</p></div>
+  </div>
+
+  <h4>3 · LLM и агентные системы</h4>
+  <div class="grid2">
+    <div class="card"><b>ChemCrow</b> (Nat Mach Intell 2024) · MIT
+      <div class="flow"><span>запрос</span><i>→</i><span class="llm">ReAct-цикл GPT-4</span><i>⇄</i><span class="code">18 инструментов: RXN, PubChem, RDKit, проверки безопасности</span><i>→</i><span class="llm">ответ</span></div>
+      <p><b>DEV:</b> 14 задач, эксперты против LLM-судьи: «EvaluatorGPT… cannot replace expert human assessment». Нет статуса проверки у отдельных фактов.</p></div>
+    <div class="card"><b>steer / Bran et al.</b> (Matter 2026) · MIT
+      <div class="flow"><span>цель + стратегия текстом</span><i>→</i><span class="code">AiZynthFinder генерирует</span><i>→</i><span class="llm">LLM оценивает и ранжирует</span></div>
+      <p><b>DEV:</b> 36 химиков, 368 оценок, совпадение с системой 71,2%. Разделение ролей то же, что в нашем ADR-0002.</p></div>
+    <div class="card"><b>LLM-Syn-Planner (ICML 2025) · AOT* (ACL 2026)</b>
+      <div class="flow"><span class="llm">LLM генерирует маршрут</span><i>→</i><span class="code">сверка с базой и шаблонами, RDKit, сток</span><i>→</i><span class="llm">эволюция / AND-OR-поиск</span></div>
+      <p><b>DEV:</b> без сверки LLM как одностадийная модель даёт 0,0 на Pistachio Hard; со сверкой 86,3 против 86,8 у специализированной модели.</p></div>
+    <div class="card"><b>DeepRetro</b> · препринт
+      <div class="flow"><span class="code">AiZynthFinder</span><i>→</i><span class="llm">при отказе LLM предлагает разрыв</span><i>→</i><span class="code">фильтры валидности</span><i>→</i><span>человек в цикле</span></div>
+      <p><b>DEV:</b> точность метаданных по оценке химиков от 40 до 80%; дороже 1 $ на молекулу. Авторы признают, что проверки «still misses many edge cases».</p></div>
+  </div>
+
+  <h4>4 · Процесс, «зелёность», регуляторика</h4>
+  <div class="grid2">
+    <div class="card"><b>Lhasa Mirabilis (+ Derek/Sarah)</b> · ICH M7
+      <div class="flow"><span>схема синтеза от человека</span><i>→</i><span class="code">purge factor примесей</span><i>→</i><span class="code">отношение к требуемому</span><i>→</i><span>опция контроля ICH M7</span></div>
+      <p><b>Единственный найденный инструмент, который принимает маршрут на вход и выдаёт формализованный вердикт.</b> Но маршрут он не генерирует.</p></div>
+    <div class="card"><b>ACS GCI Pharmaceutical Roundtable · симуляторы (DWSIM, Aspen, Dynochem, SuperPro)</b>
+      <div class="flow"><span>ручной ввод</span><i>→</i><span class="code">PMI / PMI Predictor / iGAL / подбор растворителя</span><i>·</i><span class="code">модель установки</span></div>
+      <p>Бесплатные отраслевые метрики (PMI считается до лаборатории) и симуляторы. <b>Ни один не принимает маршрут как вход</b>: они потребители нашего экспорта, а не конкуренты.</p></div>
+  </div>
+
+  <h3>Матрица возможностей</h3>
+  <p class="note">✓ есть и подтверждено · ~ частично · ✗ нет · ? не подтверждено. Строка synthroute — <b>цель по ТЗ</b>, а не измеренный факт.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Решение</th><th>Ретро</th><th>Условия</th><th>Лит. ссылки</th><th>Статус факта</th><th>Масштаб</th><th>Зелёные метрики</th><th>Безоп./регул.</th><th>Чат</th><th>Diff версий</th><th>Экспорт</th><th>OSS</th></tr></thead>
+    <tbody>
+      <tr><td>Ручной baseline</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c p">~</td><td class="c y">✓</td><td class="c p">~</td><td class="c y">✓</td><td class="c y">✓</td><td class="c n">✗</td><td class="c y">✓</td><td class="c n">✗</td></tr>
+      <tr><td>SYNTHIA</td><td class="c y">✓</td><td class="c">?</td><td class="c">?</td><td class="c n">✗</td><td class="c n">✗</td><td class="c p">~</td><td class="c p">~</td><td class="c n">✗</td><td class="c n">✗</td><td class="c p">~</td><td class="c n">✗</td></tr>
+      <tr><td>CAS SciFinder Retro</td><td class="c y">✓</td><td class="c p">~</td><td class="c y">✓</td><td class="c p">~</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c p">~</td><td class="c n">✗</td><td class="c y">✓</td><td class="c n">✗</td></tr>
+      <tr><td>Reaxys Predictive</td><td class="c y">✓</td><td class="c p">~</td><td class="c y">✓</td><td class="c p">~</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c p">~</td><td class="c n">✗</td></tr>
+      <tr><td>Iktos Spaya</td><td class="c y">✓</td><td class="c n">✗</td><td class="c">?</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c">?</td><td class="c n">✗</td></tr>
+      <tr><td>IBM RXN / rxn-sandbox</td><td class="c y">✓</td><td class="c p">~</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c p">~</td><td class="c p">~</td></tr>
+      <tr><td>ChemAIRS</td><td class="c y">✓</td><td class="c y">✓</td><td class="c p">~</td><td class="c n">✗</td><td class="c y">✓</td><td class="c n">✗</td><td class="c p">~</td><td class="c n">✗</td><td class="c">?</td><td class="c">?</td><td class="c n">✗</td></tr>
+      <tr><td>PostEra Manifold</td><td class="c y">✓</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c">?</td><td class="c n">✗</td></tr>
+      <tr><td>Molecule.one RetroTrim</td><td class="c y">✓</td><td class="c p">~</td><td class="c p">~</td><td class="c p">~</td><td class="c p">~</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c">?</td><td class="c n">✗</td></tr>
+      <tr><td>AiZynthFinder</td><td class="c y">✓</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c p">~</td><td class="c y">✓</td></tr>
+      <tr><td>ASKCOS v2</td><td class="c y">✓</td><td class="c y">✓</td><td class="c n">✗</td><td class="c p">~</td><td class="c n">✗</td><td class="c n">✗</td><td class="c p">~</td><td class="c p">~</td><td class="c n">✗</td><td class="c y">✓</td><td class="c y">✓</td></tr>
+      <tr><td>Syntheseus</td><td class="c y">✓</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c y">✓</td></tr>
+      <tr><td>RetroBioCat</td><td class="c y">✓</td><td class="c n">✗</td><td class="c y">✓</td><td class="c p">~</td><td class="c n">✗</td><td class="c p">~</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c p">~</td><td class="c p">~</td></tr>
+      <tr><td>ChemCrow</td><td class="c p">~</td><td class="c p">~</td><td class="c p">~</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c y">✓</td><td class="c y">✓</td><td class="c n">✗</td><td class="c n">✗</td><td class="c y">✓</td></tr>
+      <tr><td>steer</td><td class="c y">✓</td><td class="c n">✗</td><td class="c n">✗</td><td class="c p">~</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c y">✓</td><td class="c n">✗</td><td class="c n">✗</td><td class="c y">✓</td></tr>
+      <tr><td>DeepRetro</td><td class="c y">✓</td><td class="c p">~</td><td class="c p">~</td><td class="c p">~</td><td class="c n">✗</td><td class="c n">✗</td><td class="c p">~</td><td class="c y">✓</td><td class="c n">✗</td><td class="c n">✗</td><td class="c y">✓</td></tr>
+      <tr><td>Симуляторы процессов</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c n">✗</td><td class="c y">✓</td><td class="c p">~</td><td class="c p">~</td><td class="c n">✗</td><td class="c p">~</td><td class="c y">✓</td><td class="c p">~</td></tr>
+      <tr><td>ACS GCI tools</td><td class="c n">✗</td><td class="c n">✗</td><td class="c y">✓</td><td class="c n">✗</td><td class="c p">~</td><td class="c y">✓</td><td class="c p">~</td><td class="c n">✗</td><td class="c n">✗</td><td class="c p">~</td><td class="c p">~</td></tr>
+      <tr><td>Mirabilis + Derek/Sarah</td><td class="c n">✗</td><td class="c n">✗</td><td class="c y">✓</td><td class="c y">✓</td><td class="c n">✗</td><td class="c n">✗</td><td class="c y">✓</td><td class="c n">✗</td><td class="c n">✗</td><td class="c y">✓</td><td class="c n">✗</td></tr>
+      <tr style="background:var(--accent-soft)"><td><b>synthroute (цель)</b></td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Что работает, а что нет</h3>
+  <div class="grid2">
+    <div class="card"><h4 style="color:var(--ok)">Работает</h4><ul class="tight">
+      <li>Шаблонный и ML-ретросинтез как генератор идей: 71–97% целей получают формально замкнутый маршрут.</li>
+      <li>Прямое предсказание реакции: 87,5% против 76,5% у лучшего человека. Основа для обратной (round-trip) проверки.</li>
+      <li>Схема «LLM предлагает, детерминированный слой ограничивает»: все сильные результаты 2025–2026 построены так.</li>
+      <li>Слепая экспертная оценка как метрика (AB-тесты, Turing-тест, 4-градационный протокол).</li>
+      <li>Открытая инфраструктура оценки (Syntheseus, PaRoutes, ORD, RXNMapper) и бесплатные метрики ACS GCI.</li>
+    </ul></div>
+    <div class="card"><h4 style="color:var(--fail)">Не работает</h4><ul class="tight">
+      <li>LLM без обвязки: top-1 0,6% против 53,6%, до 20,6% невалидных структур.</li>
+      <li>Top-k и solve rate как критерий пригодности: 97% «решено» при 12–24% совпадения с практикой.</li>
+      <li>LLM как автоматический судья без калибровки.</li>
+      <li>Условия, выделение, очистка и масштаб: признанный барьер даже у лидеров открытого рынка.</li>
+      <li>Происхождение фактов и регуляторика внутри планирования: нет ни у кого.</li>
+      <li>Устойчивость бесплатного облачного слоя: IBM RXN закрывается, PostEra и Molecule.one ушли в другие продукты.</li>
+    </ul></div>
+  </div>
+  <div class="callout"><b>Пробел, который закрывает synthroute:</b> маршрут как проверяемый объект. Это открытый формат с источником и статусом каждого факта,
+    детерминированный линтер с кодами диагностик и циклом ремонта, проверка цитат (DOI существует, цитата есть в тексте), масштаб и «зелёные» метрики по маршруту,
+    версии с семантическим diff. В одностадийном ретросинтезе за SOTA <b>не конкурируем</b>: используем существующие движки как генераторы.</div>
+  <p class="note">Полный разбор с 134 источниками: <code>docs/research/02-market-analysis.md</code>. Утверждения про отключение IBM RXN и таблицу PaRoutes 2.0 перепроверены вручную по первоисточникам.</p>
+</section>
+
+<section id="arch">
+  <div class="sec-head"><div class="num">3</div><div><div class="kicker">Проектирование · блок 3</div><h2>Видение целого решения и архитектура</h2></div></div>
+  <div class="goal"><b>Принцип:</b> LLM предлагает и объясняет, детерминированный код проверяет и выставляет статусы. Каждый факт маршрута несёт источник и статус:
+    <span class="chip ok" style="font-weight:600">литература</span> <span class="chip ok">расчёт</span> <span class="chip part">гипотеза модели</span> <span class="chip fail">не прошло проверку</span>.</div>
+
+  <h3>Процесс: кто работает на каждом шаге</h3>
+  <div class="diawrap"><svg class="dia" viewBox="0 0 1180 430" role="img" aria-label="Схема процесса synthroute"><title>Схема процесса synthroute</title><desc>Ввод МНН проходит гейт, разрешение структуры, сбор свидетельств, ретросинтез и извлечение из литературы, нормализацию в RouteSpec, проверку route-lint с циклом ремонта, ранжирование, визуализацию и экспорт.</desc><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" class="ahf"/></marker><marker id="ahx" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" class="ahx"/></marker></defs><rect class="lane llm" x="88" y="94" width="1080" height="118" rx="9"/><rect class="lane code" x="88" y="224" width="1080" height="118" rx="9"/><text class="lbl llmt" x="14" y="156">LLM</text><text class="lbl codet" x="14" y="280">детермини-</text><text class="lbl codet" x="14" y="294">рованный код</text><rect class="io" x="14" y="40" width="150" height="46" rx="7"/><text class="t inv" x="89.0" y="60.5">МНН + ограничения</text><text class="s inv2" x="89.0" y="75.5">масштаб, запреты, стадии</text><rect class="io" x="1016" y="360" width="150" height="46" rx="7"/><text class="t inv" x="1091.0" y="380.5">HTML (offline) + PDF</text><text class="s inv2" x="1091.0" y="395.5">дисклеймер, источники</text><rect class="code" x="100" y="250" width="104" height="68" rx="7"/><text class="t" x="152.0" y="281.5">Входной гейт</text><text class="s" x="152.0" y="296.5">fail-closed</text><rect class="code" x="216" y="250" width="104" height="68" rx="7"/><text class="t" x="268.0" y="281.5">Разрешение МНН</text><text class="s" x="268.0" y="296.5">PubChem · ChEMBL</text><rect class="code" x="332" y="250" width="116" height="68" rx="7"/><text class="t" x="390.0" y="275.0">Сбор</text><text class="t" x="390.0" y="288.0">свидетельств</text><text class="s" x="390.0" y="303.0">адаптеры · RAG</text><rect class="code" x="460" y="250" width="112" height="68" rx="7"/><text class="t" x="516.0" y="281.5">Ретросинтез</text><text class="s" x="516.0" y="296.5">AiZynthFinder</text><rect class="code" x="584" y="250" width="116" height="68" rx="7"/><text class="t" x="642.0" y="281.5">Нормализация</text><text class="s" x="642.0" y="296.5">RouteSpec · RDKit</text><rect class="code" x="712" y="250" width="116" height="68" rx="7"/><text class="t" x="770.0" y="281.5">route-lint</text><text class="s" x="770.0" y="296.5">коды диагностик</text><rect class="code" x="840" y="250" width="112" height="68" rx="7"/><text class="t" x="896.0" y="281.5">Ранжирование</text><text class="s" x="896.0" y="296.5">метрики · кластеры</text><rect class="code" x="964" y="250" width="104" height="68" rx="7"/><text class="t" x="1016.0" y="281.5">Визуализация</text><text class="s" x="1016.0" y="296.5">Vue Flow</text><rect class="code" x="1080" y="250" width="86" height="68" rx="7"/><text class="t" x="1123.0" y="281.5">Экспорт</text><text class="s" x="1123.0" y="296.5">offline</text><rect class="llm" x="332" y="120" width="116" height="68" rx="7"/><text class="t" x="390.0" y="151.5">Извлечение</text><text class="s" x="390.0" y="166.5">статьи · патенты</text><rect class="llm" x="460" y="120" width="112" height="68" rx="7"/><text class="t" x="516.0" y="151.5">Кандидаты</text><text class="s" x="516.0" y="166.5">из литературы</text><rect class="llm" x="712" y="120" width="116" height="68" rx="7"/><text class="t" x="770.0" y="151.5">Ремонт</text><text class="s" x="770.0" y="166.5">по диагностикам</text><rect class="llm" x="964" y="120" width="104" height="68" rx="7"/><text class="t" x="1016.0" y="151.5">Чат-правки</text><text class="s" x="1016.0" y="166.5">новая версия</text><path class="a" d="M89,63 L99,260" marker-end="url(#ah)"/><path class="a" d="M205,284 L214,284" marker-end="url(#ah)"/><path class="a" d="M321,284 L330,284" marker-end="url(#ah)"/><path class="a" d="M449,284 L458,284" marker-end="url(#ah)"/><path class="a" d="M573,284 L582,284" marker-end="url(#ah)"/><path class="a" d="M701,284 L710,284" marker-end="url(#ah)"/><path class="a" d="M829,284 L838,284" marker-end="url(#ah)"/><path class="a" d="M953,284 L962,284" marker-end="url(#ah)"/><path class="a" d="M1069,284 L1078,284" marker-end="url(#ah)"/><path class="a thin" d="M376.0,249 L376.0,189" marker-end="url(#ah)"/><path class="a thin" d="M404.0,189 L404.0,249" marker-end="url(#ah)"/><path class="a thin" d="M502.0,249 L502.0,189" marker-end="url(#ah)"/><path class="a thin" d="M530.0,189 L530.0,249" marker-end="url(#ah)"/><path class="a thin" d="M756.0,249 L756.0,189" marker-end="url(#ah)"/><path class="a thin" d="M784.0,189 L784.0,249" marker-end="url(#ah)"/><path class="a thin" d="M1002.0,249 L1002.0,189" marker-end="url(#ah)"/><path class="a thin" d="M1030.0,189 L1030.0,249" marker-end="url(#ah)"/><path class="a" d="M1123,319 L1123,358" marker-end="url(#ah)"/><path class="a loop" d="M770,249 C706.0,203 706.0,203 642,249" fill="none" marker-end="url(#ahx)" stroke-dasharray="5 4"/><text class="s" x="706.0" y="213.12">не прошло → ремонт → перепроверка</text><text class="s em" x="590.0" y="420">Ни один шаг LLM не завершается без последующей детерминированной проверки</text></svg></div>
+  <p class="note">Серые стрелки между дорожками: код передаёт данные в LLM и получает результат обратно. Оранжевая петля — цикл ремонта: не прошедший проверку маршрут возвращается модели с диагностиками и проверяется заново.</p>
+
+  <h3>Компонентная архитектура</h3>
+  <div class="diawrap"><svg class="dia" viewBox="0 0 1180 470" role="img" aria-label="Компонентная архитектура synthroute"><title>Компонентная архитектура synthroute</title><desc>Пять слоёв: фронтенд на Vue, API на FastAPI, чистый домен, слой LLM с gateway и слой данных.</desc><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" class="ahf"/></marker><marker id="ahx" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" class="ahx"/></marker></defs><rect class="hdr" x="14" y="18" width="168" height="72" rx="7"/><text class="t inv" x="98.0" y="57.5">Frontend · Vue 3 + TS</text><rect class="fe" x="196" y="18" width="206" height="72" rx="7"/><text class="t" x="299.0" y="57.5">Холст маршрута (Vue Flow)</text><rect class="fe" x="412" y="18" width="186" height="72" rx="7"/><text class="t" x="505.0" y="57.5">Технологический режим</text><rect class="fe" x="608" y="18" width="176" height="72" rx="7"/><text class="t" x="696.0" y="57.5">Сравнение маршрутов</text><rect class="fe" x="794" y="18" width="130" height="72" rx="7"/><text class="t" x="859.0" y="57.5">Чат + версии</text><rect class="fe" x="934" y="18" width="140" height="72" rx="7"/><text class="t" x="1004.0" y="57.5">Режим эксперта</text><rect class="hdr" x="14" y="104" width="168" height="72" rx="7"/><text class="t inv" x="98.0" y="143.5">API · FastAPI</text><rect class="api" x="196" y="104" width="180" height="72" rx="7"/><text class="t" x="286.0" y="143.5">REST + SSE прогресса</text><rect class="api" x="386" y="104" width="250" height="72" rx="7"/><text class="t" x="511.0" y="143.5">services: generate · edit · export</text><rect class="hdr" x="14" y="190" width="168" height="72" rx="7"/><text class="t inv" x="98.0" y="229.5">Домен (чистый код)</text><rect class="code" x="196" y="190" width="116" height="72" rx="7"/><text class="t" x="254.0" y="229.5">safety: гейт</text><rect class="code" x="322" y="190" width="120" height="72" rx="7"/><text class="t" x="382.0" y="229.5">chem: RDKit</text><rect class="code" x="452" y="190" width="176" height="72" rx="7"/><text class="t" x="540.0" y="229.5">validation: route-lint</text><rect class="code" x="638" y="190" width="228" height="72" rx="7"/><text class="t" x="752.0" y="229.5">routes: модель · метрики · diff</text><rect class="code" x="876" y="190" width="160" height="72" rx="7"/><text class="t" x="956.0" y="229.5">export: HTML · PDF</text><rect class="hdr" x="14" y="276" width="168" height="72" rx="7"/><text class="t inv" x="98.0" y="315.5">LLM-слой</text><rect class="llm" x="196" y="276" width="300" height="72" rx="7"/><text class="t" x="346.0" y="315.5">agents: планировщик · извлечение · ремонт</text><rect class="llm" x="506" y="276" width="326" height="72" rx="7"/><text class="t" x="669.0" y="315.5">llm/gateway: роли · профили · кассеты · трассы</text><rect class="hdr" x="14" y="362" width="168" height="72" rx="7"/><text class="t inv" x="98.0" y="401.5">Данные и внешние</text><rect class="data" x="196" y="362" width="364" height="72" rx="7"/><text class="t" x="378.0" y="401.5">sources: PubChem · ChEMBL · Crossref · патенты · ORD</text><rect class="data" x="570" y="362" width="290" height="72" rx="7"/><text class="t" x="715.0" y="401.5">ретросинтез-сервис (отдельное окружение)</text><rect class="data" x="870" y="362" width="182" height="72" rx="7"/><text class="t" x="961.0" y="401.5">SQLite: версии · трассы</text><rect class="data" x="1062" y="362" width="110" height="72" rx="7"/><text class="t" x="1117.0" y="401.5">RAG-индекс</text><path class="a thin" d="M98,91 L98,103" marker-end="url(#ah)"/><path class="a thin" d="M98,177 L98,189" marker-end="url(#ah)"/><path class="a thin" d="M98,263 L98,275" marker-end="url(#ah)"/><path class="a thin" d="M98,349 L98,361" marker-end="url(#ah)"/><rect class="hdr" x="14" y="446" width="168" height="0" rx="7"/><text class="t inv" x="98.0" y="449.5"></text><text class="s em" x="590.0" y="458">Импорты только сверху вниз: домен не знает про HTTP и LLM (правило PY-004)</text></svg></div>
+
+  <h3>Модули и ожидаемый результат</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>#</th><th>Модуль</th><th>Почему отдельный</th><th>Вход → выход</th><th>Ожидаемый результат</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><b>safety</b></td><td>требование ТЗ, fail-closed, отдельное ревью</td><td>МНН → допуск или отказ с причиной</td><td>100% запросов проходят гейт до генерации</td></tr>
+      <tr><td>2</td><td><b>sources</b></td><td>сеть, лимиты и лицензии изолированы</td><td>идентификатор → запись + provenance</td><td>кэшируемый доступ к базам и литературе</td></tr>
+      <tr><td>3</td><td><b>chem</b></td><td>детерминированные функции RDKit</td><td>SMILES → структура, InChIKey, формула</td><td>единая идентичность веществ</td></tr>
+      <tr><td>4</td><td><b>RouteSpec / routes</b></td><td>контракт между всеми модулями</td><td>JSON ↔ модель, diff версий</td><td>один формат для бэкенда, UI, экспорта и бенчмарка</td></tr>
+      <tr><td>5</td><td><b>validation (route-lint)</b></td><td>ядро доверия и главной метрики</td><td>RouteSpec → диагностики и статусы</td><td>доля валидных шагов для любого маршрута</td></tr>
+      <tr><td>6</td><td><b>llm/gateway</b></td><td>модель меняется конфигом</td><td>роль + промпт + схема → ответ + трасса</td><td>воспроизводимость и учёт стоимости</td></tr>
+      <tr><td>7</td><td><b>agents</b></td><td>оркестрация отделена от домена</td><td>МНН + свидетельства → кандидаты</td><td>разные стратегии с источниками</td></tr>
+      <tr><td>8</td><td><b>retro</b></td><td>тяжёлые зависимости</td><td>структура → деревья маршрутов</td><td>кандидаты без LLM и baseline</td></tr>
+      <tr><td>9</td><td><b>RAG</b></td><td>цитируемость литературы</td><td>запрос → фрагмент + DOI или патент + цитата</td><td>факт привязан к проверяемому фрагменту</td></tr>
+      <tr><td>10</td><td><b>frontend</b></td><td>визуализация доверия — часть продукта</td><td>RouteSpec → схема, режимы, сравнение</td><td>за 10 секунд видно, чему верить</td></tr>
+      <tr><td>11</td><td><b>chat + версии</b></td><td>прозрачные правки</td><td>реплика → новая версия + diff</td><td>понятно, кто и что поменял</td></tr>
+      <tr><td>12</td><td><b>export</b></td><td>автономность и печать</td><td>версия → HTML (offline) и PDF</td><td>отчёт без сети, дисклеймер на месте</td></tr>
+      <tr><td>13</td><td><b>eval</b></td><td>научный результат и регрессии</td><td>конфигурация → метрики с CI</td><td>сравнение с LLM без обвязки по точности и цене</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Подробно с Mermaid-схемами: <code>docs/architecture/overview.md</code>. Решения: ADR-0002 (генерация под контролем верификаторов), ADR-0003 (открытый формат RouteSpec).</p>
+</section>
+
+<section id="env">
+  <div class="sec-head"><div class="num">4</div><div><div class="kicker">Инфраструктура · блоки 4 и 10</div><h2>Рабочее окружение и доступ к моделям</h2></div></div>
+  <div class="goal"><b>Цель:</b> показать, что доступ к моделям реально работает, и зафиксировать, какая модель за что отвечает и почему.</div>
+
+  <h3>Как подключились</h3>
+  <ul class="tight">
+    <li>Ключ создан в Google AI Studio и хранится в <code>.env</code>. Файл исключён из git (<code>.gitignore</code>), правила и хуки запрещают агентам его читать, ключ не попадает ни в логи, ни в отчёт.</li>
+    <li>Проверка выполнена скриптом <code>scripts/check_models.py</code>: список моделей и три мини-задачи по ролям конвейера, без авто-ретраев SDK (чтобы видеть реальные ошибки). Лог в <code>docs/reports/assets/model-check-run1.json</code>.</li>
+    <li>Список моделей через API: <b>62 модели</b> доступны ключу.</li>
+  </ul>
+  <h4>Лог успешного вызова (фрагмент)</h4>
+<pre><code>62 models available
+gemini-3.5-flash-lite  ping        ok  mode=text    correct=True  0.68s  tokens=9
+gemini-3.5-flash-lite  extractor   ok  mode=native  correct=True  1.03s  tokens=192
+gemini-3.5-flash-lite  classifier  ok  mode=native  correct=True  0.87s  tokens=73
+gemma-4-26b-a4b-it     extractor   ok  mode=native  correct=True  1.94s  tokens=181
+gemini-3.5-flash       extractor   FAIL  429 RESOURCE_EXHAUSTED (квота free tier)
+gemini-3.6-flash       ping        FAIL  503 UNAVAILABLE ("high demand")</code></pre>
+
+  <h3>Smoke-тест: 7 моделей × 3 задачи (прогон 1, 13.10 09:38 UTC)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Модель</th><th>ping</th><th>extractor: JSON по схеме</th><th>classifier</th><th>Успешно</th><th>Латентность</th><th>Наблюдение</th></tr></thead>
+    <tbody>
+      <tr><td><code>gemini-3.5-flash-lite</code></td><td class="c y">✓</td><td class="c y">✓ верно</td><td class="c y">✓ верно</td><td><div class="bar" title="3/3"><div style="width:100%"></div></div>3/3</td><td>0.7–1.0 с</td><td>стабильно; нативная JSON-схема</td></tr>
+      <tr><td><code>gemma-4-26b-a4b-it</code></td><td class="c n">500</td><td class="c y">✓ верно</td><td class="c n">500</td><td><div class="bar"><div style="width:33%"></div></div>1/3</td><td>1.9 с</td><td>JSON-схема работает; сбои 500</td></tr>
+      <tr><td><code>gemma-4-31b-it</code></td><td class="c n">500</td><td class="c y">✓ верно</td><td class="c n">500</td><td><div class="bar"><div style="width:33%"></div></div>1/3</td><td>21 с</td><td>медленно, сбои 500</td></tr>
+      <tr><td><code>gemini-3.6-flash</code></td><td class="c n">503</td><td class="c n">503</td><td class="c n">503</td><td><div class="bar"><div style="width:0"></div></div>0/3</td><td>—</td><td>перегрузка</td></tr>
+      <tr><td><code>gemini-3.5-flash</code></td><td class="c n">503</td><td class="c n">429</td><td class="c n">429</td><td><div class="bar"><div style="width:0"></div></div>0/3</td><td>—</td><td>квота исчерпана</td></tr>
+      <tr><td><code>gemini-3.8-flash</code></td><td class="c n">503</td><td class="c n">503/504</td><td class="c n">504</td><td><div class="bar"><div style="width:0"></div></div>0/3</td><td>—</td><td>перегрузка, таймаут</td></tr>
+      <tr><td><code>gemini-3.1-pro-preview</code></td><td class="c n">429</td><td class="c n">429</td><td class="c n">429</td><td><div class="bar"><div style="width:0"></div></div>0/3</td><td>—</td><td>квота free tier нулевая</td></tr>
+    </tbody>
+  </table></div>
+  <h4>Повторный замер (прогон 2, 09:42–09:49 UTC): картина устойчива</h4>
+  <div class="tbl"><table>
+    <thead><tr><th>Модель</th><th>Прогон 1</th><th>Прогон 2</th><th>Итого верных ответов</th></tr></thead>
+    <tbody>
+      <tr><td><code>gemini-3.5-flash-lite</code></td><td>3/3</td><td>3/3 (0.7–1.4 с)</td><td><b>6/6</b></td></tr>
+      <tr><td><code>gemma-4-26b-a4b-it</code></td><td>1/3</td><td>1/3 (500, 504)</td><td>2/6</td></tr>
+      <tr><td><code>gemma-4-31b-it</code></td><td>1/3</td><td>1/3 (503, 500)</td><td>2/6</td></tr>
+      <tr><td><code>gemini-3.6-flash</code> / <code>3.8-flash</code></td><td>0/3</td><td>0/3 (503, 504, таймаут)</td><td>0/12</td></tr>
+      <tr><td><code>gemini-3.5-flash</code> / <code>3.1-pro-preview</code></td><td>0/3</td><td>0/3 (429)</td><td>0/12</td></tr>
+      <tr><td colspan="3"><b>Всего</b></td><td><b>10/42</b> вызовов успешны и верны; все 10 успешных ответов верны</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Два прогона с интервалом около 10 минут — это снимок одного дня, а не оценка надёжности. Замеры будут повторяться автоматически в разное время суток (этап 2).</p>
+  <h3>Лимиты и как они влияют на план</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Модель</th><th>Исчерпанная квота</th><th>Значение</th><th>Сброс</th></tr></thead>
+    <tbody>
+      <tr><td><code>gemini-3.6-flash</code> (сюда перенаправляется <code>gemini-3.5-flash</code>)</td><td><code>GenerateRequestsPerDayPerProjectPerModel-FreeTier</code></td><td><b>20 запросов в сутки</b></td><td>через 9,9 ч</td></tr>
+      <tr><td><code>gemini-3.1-pro-preview</code></td><td>requests/min, requests/day, tokens/min, tokens/day</td><td>значение не возвращается, то есть <b>0 на бесплатном тире</b></td><td>—</td></tr>
+      <tr><td><code>gemini-3.5-flash-lite</code></td><td>на момент замера не исчерпана</td><td>—</td><td>—</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><b>Это главное практическое ограничение проекта.</b> 20 запросов в сутки на модель класса Flash означают,
+    что многоагентный прогон (≈ 50 вызовов на один кейс) на Flash <b>невозможен в пределах суточной квоты</b> — именно поэтому упал живой прогон,
+    а не из-за случайной перегрузки. Следствия: основная рабочая модель — <code>gemini-3.5-flash-lite</code>;
+    роль <code>planner</code> должна быть экономной по числу обращений; массовые шаги уходят на flash-lite, Gemma и локальные модели;
+    для воспроизводимых прогонов бенчмарка обязательны кассеты и Kaggle.</div>
+  <ul class="tight">
+    <li><b>Лимиты сняты с самого API.</b> Публичная страница больше не публикует числа по моделям, но ответ 429 содержит
+      <code>QuotaFailure</code> с точными значениями (<code>scripts/check_quota.py</code>, лог <code>quota-probe.json</code>).</li>
+    <li><b>На практике бесплатный тир нестабилен:</b> 503, 500 и 429 встречаются в одном прогоне. Поэтому gateway с первого дня строится с ретраями и backoff, fallback-цепочкой моделей на роль и кассетами (запись и воспроизведение) для тестов и бенчмарка.</li>
+    <li><b>Данные:</b> на бесплатном тире запросы могут использоваться провайдером для улучшения продуктов. Через него отправляем только открытые данные (открытые статьи, патенты, ORD).</li>
+    <li><b>Воспроизводимость:</b> перенаправление идентификаторов подтвердилось на практике — запрос к <code>gemini-3.5-flash</code> вернул квоту с измерением <code>model: gemini-3.6-flash</code>. Поэтому в трассу пишем <code>model_version</code>, а числа для статьи считаем на кассетах или замороженных локальных моделях.</li>
+  </ul>
+
+  <h3>Мини-eval роли <code>extractor</code>: выбор модели подтверждён тестом</h3>
+  <p>Распределение ролей не должно оставаться гипотезой, поэтому для самой массовой роли сделан измеримый тест
+    (<code>eval/mini_eval_citations.py</code>). 12 реальных статей из наших заметок, эталон из Crossref по DOI.
+    <b>У половины элементов DOI из текста удалён</b>, и модель прямо просят вернуть <code>null</code>, если поля в тексте нет.
+    Это одновременно проверка извлечения и проверка на выдумывание.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Модель</th><th>Ответов</th><th>Фамилия</th><th>Год</th><th>Журнал</th><th>DOI верен, когда он есть</th><th>DOI выдуман, когда его нет</th><th>Латентность</th></tr></thead>
+    <tbody>
+      <tr><td><code>gemini-3.5-flash-lite</code></td><td>12/12</td><td class="c">0,92</td><td class="c y">1,00</td><td class="c y">1,00</td><td class="c y">1,00</td><td class="c y"><b>0,00</b></td><td>11,8 с</td></tr>
+      <tr><td><code>gemma-4-26b-a4b-it</code></td><td>4/12 <span class="chip part">8 отказов 500/504</span></td><td class="c y">1,00</td><td class="c y">1,00</td><td class="c y">1,00</td><td class="c y">1,00</td><td class="c y"><b>0,00</b></td><td>32,4 с</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><b>Первая собственная цифра для метрик M5 и M6.</b> Ни одного выдуманного DOI: там, где ссылки в тексте не было,
+    модель корректно вернула «нет данных». Для сравнения, в литературе доля выдуманных ссылок у LLM составляет 18–55%.
+    У Gemma качество на отвеченных элементах полное, но две трети вызовов не дошли: это модель массовых шагов <b>с обязательным fallback</b>, а не основная. Оговорка: 12 элементов и один прогон, доверительные интервалы здесь не считаются, набор расширяется на этапе 2.</div>
+
+  <h3>Живой прогон отборочного проекта через Gemini: смена модели конфигом</h3>
+  <p>Кейс <code>biohub_gate_experiment</code> запущен в режиме <code>--llm live</code> с единственным изменением —
+    переменной окружения <code>HARNESS_MODEL=gemini/gemini-3.5-flash-lite</code> вместо модели Claude.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Что проверялось</th><th>Результат</th></tr></thead>
+    <tbody>
+      <tr><td>Смена модели и провайдера <b>без единой правки кода</b></td><td><span class="chip ok">работает</span> диспетчер на Gemini построил план, выбрал субагента и подключил нужный скилл</td></tr>
+      <tr><td>Прохождение кейса целиком</td><td><span class="chip fail">падение</span> на втором вызове модели: <code>503 Service Unavailable</code>, через 56 с</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Требование программы «архитектура позволяет менять модель одной настройкой» выполнено и проверено на практике.
+    Но обвязка отборочного проекта повторяет запрос только при пустом ответе и не обрабатывает 5xx, поэтому одна ошибка 503 роняет весь прогон.
+    Для synthroute это конкретное требование к gateway: ретраи с экспоненциальной задержкой на 5xx, отдельная обработка 429 и fallback-цепочка моделей на роль.</p>
+
+  <h3>Вычислительные мощности: Kaggle подключён и проверен</h3>
+  <p>Приватный ноутбук <code>synthroute-gpu-smoke</code> отправлен через Kaggle API и выполнен на GPU.
+    Лог: <code>docs/reports/assets/kaggle-gpu-smoke/</code>.</p>
+<pre><code>name, memory.total [MiB], driver_version
+Tesla T4, 15360 MiB, 580.178.04
+Tesla T4, 15360 MiB, 580.178.04
+{"torch": "2.11.0+cu128", "cuda_available": true,
+ "devices": [{"name": "Tesla T4", "vram_gb": 14.6}, {"name": "Tesla T4", "vram_gb": 14.6}],
+ "fp16_matmul_tflops": 11.2}</code></pre>
+  <p class="note">Это снимает пометку «VRAM не подтверждена» из исследования окружения: 2 × 14,6 ГБ доступной видеопамяти,
+    11,2 TFLOPS в fp16. Для замороженных прогонов бенчмарка на Gemma 4 в 4-битной квантизации этого достаточно.</p>
+
+  <h3>Какая модель для какой задачи</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Роль</th><th>Модель</th><th>Класс</th><th>Задачи</th><th>Почему</th></tr></thead>
+    <tbody>
+      <tr><td>planner</td><td><code>gemini-3.8-flash</code> (thinking high) → fallback <code>gemini-3.5-flash</code></td><td>более «умная»</td><td>многошаговое планирование маршрута, анализ</td><td>Pro недоступна на бесплатном тире (429); качество важнее скорости</td></tr>
+      <tr><td>extractor</td><td><code>gemini-3.5-flash-lite</code></td><td>быстрая</td><td>извлечение реакций, условий и цитат в JSON по схеме</td><td><b>подтверждено мини-eval:</b> 0 выдуманных DOI, точность полей 0,92–1,00</td></tr>
+      <tr><td>classifier</td><td><code>gemma-4-26b-a4b-it</code> → fallback flash-lite</td><td>простая, массовая</td><td>фильтрация документов, тип фрагмента</td><td>открытые веса (Apache 2.0), есть локальный «близнец»; сбои 500 закрываются fallback</td></tr>
+      <tr><td>chat</td><td><code>gemini-3.6-flash</code></td><td>диалоговая</td><td>понимание правок пользователя</td><td>баланс качества и латентности; при 503 — fallback</td></tr>
+      <tr><td>embeddings</td><td><code>gemini-embedding-2</code></td><td>эмбеддинги</td><td>RAG-индекс</td><td>фиксированная размерность; ещё не проверялась (этап 2)</td></tr>
+    </tbody>
+  </table></div>
+  <h4>Локальные модели</h4>
+  <div class="tbl"><table>
+    <thead><tr><th>Модель</th><th>Где запускаем</th><th>Для каких задач</th><th>Почему</th></tr></thead>
+    <tbody>
+      <tr><td>Gemma 4 (4-bit)</td><td>Kaggle 2× T4 — <b>проверено:</b> 2 × 14,6 ГБ VRAM, 11,2 TFLOPS fp16</td><td>воспроизводимые прогоны бенчмарка, массовая классификация</td><td>замороженные веса для статьи; не зависят от лимитов и перегрузок API</td></tr>
+      <tr><td>RDKit, AiZynthFinder</td><td>локально (M4, CPU), отдельное окружение Python 3.12</td><td>проверки, ретросинтез</td><td>CPU достаточно; у AiZynthFinder свои пины зависимостей</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Комбинация: облачные модели берут сложные и диалоговые шаги, локальная Gemma — массовые шаги и замороженные прогоны для статьи. Переключение задаётся профилем в конфиге (<code>free</code> / <code>paid</code> / <code>local</code>).</p>
+
+  <h3>Тест на отборочном проекте (<code>kaggle_harness</code>)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Проверка</th><th>Результат</th></tr></thead>
+    <tbody>
+      <tr><td>Все 4 кейса в режиме replay, Python 3.12, на копии проекта</td><td><span class="chip ok">exit 0</span> 5 мин 02 с; 18 шагов диспетчера, 187 вызовов инструментов, 227 вызовов модели</td></tr>
+      <tr><td><code>biohub_final_picks</code>: сверка с приватом</td><td>выбор harness → <b>0.936</b> против 0.935 у реального выбора команды и 0.934 у «2 лучших по public»; совпадает с README</td></tr>
+      <tr><td><code>biohub_line_review</code></td><td>разбор прав в 17 решениях из 26, команда — в 14; совпадает с README</td></tr>
+      <tr><td>Изоляция</td><td>ни одного выхода инструментов из рабочей папки и обращений к private</td></tr>
+      <tr><td>Дрейф replay</td><td><span class="chip part">замечание</span> <code>rsna_day1</code>: промпт отличался от записи в 8 вызовах из 57 (вероятно, текущая дата в промпте)</td></tr>
+      <tr><td>Зависимости</td><td><span class="chip part">замечание</span> <code>litellm&gt;=1.50</code> не исключает версии 1.82.7 и 1.82.8, которые были скомпрометированы 24.03.2026. Установлены 1.105.0 и 1.103.1 (не затронуты). Нужно закрепить <code>&gt;=1.83</code></td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Из отборочного проекта переносим record/replay-клиент LLM (основа кассет) и принцип «важные правила в коде, а не в промптах». Подробности: <code>docs/research/05-environment-check.md</code>, <code>docs/research/04-models-and-environment.md</code>.</p>
+</section>
+
+<section id="data">
+  <div class="sec-head"><div class="num">5</div><div><div class="kicker">Данные и знания · блоки 5 и 6</div><h2>Датасеты, бенчмарк и хранилище для RAG</h2></div></div>
+  <div class="goal"><b>Итог:</b> реальных открытых данных достаточно, симуляция не нужна. Бенчмарк собирается и публикуется <b>без коммерческих баз</b>,
+    из источников CC0, CC BY, CC BY-SA и public domain. Все объёмы и лицензии агент проверил живыми запросами к API (150 источников).</div>
+
+  <h3>Ядро открытых данных</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Источник</th><th>Что и сколько</th><th>Лицензия</th><th>Роль в проекте</th></tr></thead>
+    <tbody>
+      <tr><td><b>USPTO (Lowe)</b></td><td>1 808 937 реакций из патентов США 1976–2016</td><td>CC0</td><td>шаблоны, сверка шагов с эталоном</td></tr>
+      <tr><td><b>Open Reaction Database</b></td><td>2 428 291 реакция в 53 датасетах, ссылки на первоисточник</td><td>CC BY-SA 4.0</td><td>основной структурированный источник статуса «литература»</td></tr>
+      <tr><td><b>PaRoutes</b></td><td>2 × 10 000 многостадийных маршрутов + стоки</td><td>CC BY 4.0</td><td>эталон многостадийных метрик, распределение длин маршрутов</td></tr>
+      <tr><td><b>ChEMBL 37</b></td><td>4 225 молекул с <code>max_phase=4</code> (3 475 малых), 11 211 синонимов-МНН</td><td>CC BY-SA 3.0</td><td>ядро отбора одобренных препаратов, МНН → структура</td></tr>
+      <tr><td><b>PubChem</b></td><td>124,7 млн соединений, 82,9 млн патентных связей, GHS-классификации</td><td>по депозитору; ≤ 5 запросов/с</td><td>синоним → структура, патентные ссылки, флаги опасности</td></tr>
+      <tr><td><b>Orange Book, Drugs@FDA, openFDA</b></td><td>патенты и эксклюзивности, факт и даты одобрения</td><td>public domain</td><td>критерий «вне патентной защиты» (справочно), подтверждение одобрения</td></tr>
+      <tr><td><b>EMA</b></td><td>1 568 действующих препаратов для человека, ссылки на EPAR</td><td>с атрибуцией</td><td>второй регулятор; EPAR как документы для RAG</td></tr>
+      <tr><td><b>SureChEMBL, Google Patents, USPTO</b></td><td>химия из полных текстов патентов 5 ведомств; свыше 90 млн публикаций</td><td>CC BY 4.0 / PD Mark</td><td>связь «структура ↔ патент», полные тексты</td></tr>
+      <tr><td><b>Сток AiZynthFinder (ZINC)</b></td><td>17 422 831 покупаемое вещество</td><td>MIT</td><td>проверка доступности сырья</td></tr>
+      <tr><td><b>ICH Q3C / Q3D / M7 / Q11</b></td><td>классы растворителей, PDE элементов, TTC, принципы выбора исходных материалов</td><td>с указанием источника</td><td>детерминированные регуляторные флаги</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note"><b>Исключены по лицензии</b> (зафиксировать как allow-list в коде): CAS — прямой запрет ML и ИИ; Enamine — ToU §15.2 запрещает ML-обработку; MolPort на HF — CC BY-NC; DrugBank — загрузки приостановлены, производные базы запрещены; ГРЛС — автоматический обход запрещён (только ручная справка).</p>
+
+  <h3>Бенчмарк: отбор 30–50 препаратов (воронка F1–F8)</h3>
+  <div class="flow"><span class="code">F1 одобрен<br><small>ChEMBL + регулятор</small></span><i>→</i><span class="code">F2 есть МНН</span><i>→</i><span class="code">F3 однозначная малая молекула</span><i>→</i><span class="code">F4 вне патентов<br><small>Orange Book, справочно</small></span><i>→</i><span class="code">F5 ≥ 2 открытых источника маршрута</span><i>→</i><span class="code">F6 исключение регулируемых веществ<br><small>по перечням, fail-closed</small></span><i>→</i><span class="code">F7 разнообразие каркасов</span><i>→</i><span class="code">F8 квоты классов</span></div>
+  <p class="note">Конкретные препараты и маршруты в документах не перечисляются: список формирует скрипт, тест-сплит заморожен (EVAL-002). Модуль F6 — тот же код, что входной гейт платформы.</p>
+  <div class="grid2">
+    <div class="card"><h4>Как убедиться, что данные покрывают реальные классы задачи</h4><ul class="tight">
+      <li><b>Квоты:</b> хиральность, N-гетероциклы (≈59% одобренных малых молекул), фтор (≈20% препаратов), защитные группы, каталитические стадии, биокаталитические кандидаты (10–15%), длина 2–3 / 4–6 / ≥7, конвергентность.</li>
+      <li><b>Сравнение скриптом</b> с референсом ChEMBL <code>max_phase=4</code> и классами реакций USPTO/ORD: доли с bootstrap CI, KS, Вассерштейн, Йенсен–Шеннон.</li>
+      <li>Класс с долей ≥ 5% в референсе и нулём в бенчмарке — <b>блокирующий дефект набора</b>.</li>
+    </ul></div>
+    <div class="card"><h4>Сплиты и контроль контаминации</h4>
+      <div class="tbl" style="border:none;margin:0"><table><tbody>
+        <tr><td><b>dev ≈ 40%</b></td><td>отладка промптов и проверок, доступен агентам</td></tr>
+        <tr><td><b>test ≈ 60%</b></td><td>scaffold-split, заморожен, хэш в ADR</td></tr>
+        <tr><td>temporal</td><td>источник опубликован после даты отсечения знаний моделей</td></tr>
+        <tr><td>perturbed</td><td>запрос по структуре или редкому синониму вместо МНН</td></tr>
+        <tr><td>exposure-probe</td><td>модель без RAG просят назвать источники эталона</td></tr>
+        <tr><td>reference-masked</td><td>RAG без документов эталона: честное сравнение с B0</td></tr>
+      </tbody></table></div></div>
+  </div>
+
+  <h3>Пул кандидатов бенчмарка: воронка прогнана на реальных данных</h3>
+  <p>Отбор реализован скриптом <code>eval/select_benchmark.py</code> и выполнен end-to-end: ChEMBL 37, Orange Book (выгрузка 08.2026),
+    openFDA NDC, 21 CFR 1308, Europe PMC. Результат — <code>eval/benchmark/candidates_v0.csv</code> (627 кандидатов, из них выборка 40)
+    и отчёт покрытия <code>eval/reports/coverage.md</code>. В файлах только идентификаторы и вычисленные свойства: ни маршрутов, ни реагентов, ни условий.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Фильтр</th><th>Критерий</th><th>Осталось</th><th>Отсеяно</th></tr></thead>
+    <tbody>
+      <tr><td>F1a</td><td>ChEMBL: одобрено, малые молекулы</td><td>3475</td><td>—</td></tr>
+      <tr><td>F1</td><td>только родительские записи (соли и формы отброшены)</td><td>2306</td><td>1169</td></tr>
+      <tr><td>F2</td><td>есть МНН</td><td>1845</td><td>461</td></tr>
+      <tr><td>F3</td><td>однозначная малая молекула (RDKit) = <b>референсная популяция</b></td><td>1774</td><td>71</td></tr>
+      <tr><td>F4</td><td>нет действующих патентов и эксклюзивности в Orange Book (справочно)</td><td>811</td><td>963</td></tr>
+      <tr><td>F6</td><td><b>исключение контролируемых веществ, fail-closed</b></td><td>736</td><td>75</td></tr>
+      <tr><td>F5</td><td>документированность (прокси Europe PMC, ≥ 2 записей)</td><td>627</td><td>109</td></tr>
+      <tr><td>F7</td><td>разнообразие каркасов, MaxMin → выборка</td><td><b>40</b></td><td>587</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Гейт F6 — тот же код, что входной гейт платформы. Названия исключённых веществ не выводятся нигде, только количество.
+    При недоступности любого источника гейта запуск прерывается до записи результатов. У всех кандидатов стоит <code>ru_list_check=pending_manual</code>:
+    перечень ПП РФ № 681 машиночитаемо не опубликован, ручная сверка обязательна до заморозки бенчмарка.</p>
+
+  <h4>Покрытие реальных классов задачи: посчитано, а не заявлено</h4>
+  <div class="tbl"><table>
+    <thead><tr><th>Класс</th><th>Референс (1774)</th><th>Пул (627)</th><th>Выборка (40)</th><th>Δ, п.п.</th><th>Статус</th></tr></thead>
+    <tbody>
+      <tr><td>N-гетероцикл</td><td>62,5% [60,3; 64,7]</td><td>59,2%</td><td>65,0%</td><td>+2,5</td><td><span class="chip ok">покрыто</span></td></tr>
+      <tr><td>≥ 1 стереоцентр</td><td>59,2% [57,0; 61,4]</td><td>61,1%</td><td>52,5%</td><td>−6,7</td><td><span class="chip ok">покрыто</span></td></tr>
+      <tr><td>атом фтора</td><td>15,8% [14,1; 17,4]</td><td>11,5%</td><td>5,0%</td><td>−10,8</td><td><span class="chip fail">пробел</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Доли с 95% bootstrap-интервалами (1000 повторов, seed 42). По непрерывным свойствам (MW, cLogP, TPSA, Fsp3, HBD, HBA, кольцевые системы)
+    статистически значимых сдвигов выборки относительно референса нет (тест Колмогорова–Смирнова, все p &gt; 0,05).</p>
+  <div class="callout"><b>Найден реальный дефект набора, и это полезный результат.</b> Фторсодержащих молекул в выборке 5% против 15,8% в референсе:
+    MaxMin по каркасам оптимизирует разнообразие скелетов и не следит за заместителями. На этапе 2 добавляется квота по фтору (фильтр F8).
+    Классы уровня маршрута (защитные группы, катализ, биокатализ, длина, конвергентность) пока не оценивались: маршрутов ещё нет.</div>
+
+  <h3>Примеры данных для согласования: RouteSpec v0.1</h3>
+  <p>Схема <code>schemas/route/v0.1/route.schema.json</code> (JSON Schema 2020-12) покрывает все сущности ТЗ:</p>
+  <ul class="tight">
+    <li><b>вещества</b> (узлы): SMILES, InChIKey, роль, «покупаем или синтезируем», доступность и цена;</li>
+    <li><b>стадии</b> (рёбра): вход и выход со стехиометрией, условия с явными единицами, выход, периодический или непрерывный режим, безопасность;</li>
+    <li><b>масштаб</b> lab / pilot / plant;</li>
+    <li><b>источники</b> с цитатой;</li>
+    <li><b>статусы проверки</b> с версиями;</li>
+    <li><b>метрики</b> маршрута;</li>
+    <li>обязательный <b>дисклеймер</b>.</li>
+  </ul>
+  <p>Примеры трёх видов: валидный, проваливающий линтер и невалидный по схеме (результат проверки — в разделе 7).</p>
+<pre><code>{ "schema_version": "0.1.0",
+  "route": { "id": "toy-ethyl-acetate", "target_id": "etoac", "disclaimer": "…требуют экспериментальной проверки…" },
+  "substances": [ { "id": "etoh", "smiles": "CCO", "inchikey": "LFQSCWFLJHTTHZ-UHFFFAOYSA-N",
+                    "role": "starting_material", "sourcing": "buy", "availability": { "status": "available" } }, … ],
+  "steps": [ { "id": "S2", "reaction_type": "esterification",
+               "inputs":  [ { "substance_id": "acoh", "coefficient": 1 }, { "substance_id": "etoh", "coefficient": 1 } ],
+               "outputs": [ { "substance_id": "etoac", "coefficient": 1 }, { "substance_id": "h2o", "coefficient": 1 } ],
+               "scale": { "plant": { "equipment": ["reactor", "distillation"], "solvent_recycling": true } },
+               "provenance": [ { "kind": "doi", "ref": "10.…", "quote": "дословная цитата" } ],
+               "verification": [ { "check_id": "RL203", "check_version": "0.1", "status": "computed" } ] } ] }</code></pre>
+  <p class="note">Фрагмент сокращён. Поля <code>provenance</code> и <code>verification</code> показаны заполненными для наглядности, а в файле примера стоит <code>"kind": "model"</code>, поэтому линтер честно ставит статус «гипотеза». Пример намеренно учебный (бытовая химия), чтобы согласовать формат, не обсуждая конкретные маршруты.</p>
+
+  <h3>RAG: типы документов и хранилище (блок 6)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Тип документа</th><th>Что извлекаем</th><th>Доступ и лицензия</th></tr></thead>
+    <tbody>
+      <tr><td>Статьи процессной и медицинской химии</td><td>граф «из чего что получено», тип стадии, выход, масштаб, цитата-основание</td><td>метаданные Crossref и OpenAlex свободны; полные тексты OA через Europe PMC (JATS XML); подписные — только TDM, цитаты ≤ 200 символов</td></tr>
+      <tr><td>Патенты, в том числе процессные</td><td>структуры, принадлежность вещества документу, даты приоритета</td><td>USPTO (PD), Google Patents (CC BY 4.0), SureChEMBL (CC BY 4.0), EPO OPS</td></tr>
+      <tr><td>Записи реакционных баз</td><td>реакция в машинном виде, роли, выход, ссылка на первоисточник</td><td>ORD, USPTO, PaRoutes</td></tr>
+      <tr><td>Регуляторные руководства и EPAR</td><td>классы растворителей, PDE, TTC, принципы RSM; характеристики субстанции</td><td>ICH и EMA с указанием источника, FDA — public domain</td></tr>
+      <tr><td>Гайды по растворителям и метрикам, данные GHS</td><td>ранги растворителей, формулы PMI, классы опасности</td><td>лицензия хранится у каждой записи</td></tr>
+    </tbody>
+  </table></div>
+  <div class="flow"><span class="code">адаптеры с лимитами и журналом лицензий</span><i>→</i><span class="code">JATS/XML вместо OCR; GROBID или Docling для PDF</span><i>→</i><span class="code">чанки по структуре документа; экспериментальные разделы отдельно</span><i>→</i><span class="code">метаданные: DOI или патент, дата, лицензия, max_quote_len, InChIKey упомянутых веществ</span><i>→</i><span class="code">гибридный поиск: BM25 + эмбеддинги + структурный (RDKit, FPSim2) через RRF</span><i>→</i><span class="llm">LLM-извлечение</span><i>→</i><span class="code">цитата со смещениями → проверка TRUST-004</span></div>
+  <div class="grid2">
+    <div class="card"><h4>Почему RAG, а не fine-tuning и не «просто LLM»</h4><ul class="tight">
+      <li>Маршруты конкретных препаратов — это «длинный хвост», где RAG превосходит fine-tuning.</li>
+      <li>Fine-tuning на новом знании повышает склонность модели к галлюцинациям.</li>
+      <li>Нужна цитируемость: у каждого факта должны быть источник и проверяемая цитата, а в весах модели это невозможно.</li>
+      <li>Лицензии (длина цитаты, запреты ML) соблюдаются на уровне метаданных чанка.</li>
+      <li>В химии RAG дал +17,4% относительного улучшения (ChemRAG-Bench).</li>
+    </ul></div>
+    <div class="card"><h4>Риски данных</h4><ul class="tight">
+      <li><b>Лицензия бенчмарка:</b> ORD распространяется под CC BY-SA, ShareAlike наследуется. Нужен ADR: публиковать датасет под CC BY-SA, хранить только <code>ord_id</code> или строить публикуемую часть на CC0 и CC BY.</li>
+      <li><b>Процессная химия почти не в открытом доступе:</b> по журналу OPRD в Europe PMC 191 запись против 7 069 DOI в Crossref. Нужен TDM-доступ ACS и Elsevier через библиотеку ИТМО.</li>
+    </ul></div>
+  </div>
+  <p class="note">Подробно со 150 источниками: <code>docs/research/03-data-and-rag.md</code>.</p>
+</section>
+
+<section id="feature">
+  <div class="sec-head"><div class="num">7</div><div><div class="kicker">Старт разработки · блок 7</div><h2>Первая фича: route-lint v0</h2></div></div>
+  <div class="goal"><b>Что это:</b> детерминированный «компилятор» для маршрутов синтеза. Он принимает маршрут в формате RouteSpec и возвращает диагностики с кодами и статус каждой стадии.
+    Модель в нём не участвует. Это и делает его независимым измерителем качества любых генераторов: LLM, ретросинтеза или человека.</div>
+
+  <h3>Видение</h3>
+  <pre><code>route.json: 3 стадии · валидны 2/3
+  S1  ✓ computed     все обязательные проверки пройдены
+  S2  ? hypothesis   RL201 (предупреждение) строгий баланс не сходится: не хватает {O: 1, H: 2}
+                     подсказка: возможно, не указан побочный продукт H2O
+                     RL301 у стадии нет источника → статус не выше «гипотезы»
+  S3  ✗ failed       RL203 в продукте есть тяжёлые атомы, которых нет в реагентах</code></pre>
+  <p>Эти же диагностики потом станут бейджами на рёбрах схемы в UI, будут уходить в LLM в цикле ремонта и агрегироваться в главную метрику бенчмарка.</p>
+
+  <h3>Архитектура фичи</h3>
+  <div class="flow"><span>route.json</span><i>→</i><span class="code">parse: JSON Schema RouteSpec v0.1</span><i>→</i><span class="code">модель Pydantic</span><i>→</i><span class="code">реестр проверок RL1–RL4</span><i>→</i><span class="code">агрегация: статус = худший результат</span><i>→</i><span>LintReport: диагностики, статусы, метрики, версии инструментов</span></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Код</th><th>Проверка v0</th><th>Как</th><th>При провале</th></tr></thead>
+    <tbody>
+      <tr><td>RL0xx</td><td>документ соответствует схеме RouteSpec</td><td><code>jsonschema</code>, draft 2020-12</td><td>документ отклонён</td></tr>
+      <tr><td>RL1xx</td><td>структуры валидны, InChIKey совпадает с вычисленным</td><td>RDKit: парсинг, санитизация, InChIKey</td><td><span class="chip fail">failed</span></td></tr>
+      <tr><td>RL2xx</td><td><b>двухуровневый баланс:</b> (1) тяжёлые атомы продукта происходят из заявленных реагентов; (2) строгий баланс атомов и заряда</td><td>RDKit: подсчёт элементов и формального заряда</td><td>(1) <span class="chip fail">failed</span>; (2) предупреждение с подсказкой о малых побочных продуктах</td></tr>
+      <tr><td>RL3xx</td><td>у стадии есть источник</td><td>правило над <code>provenance</code></td><td>не выше <span class="chip part">hypothesis</span></td></tr>
+      <tr><td>RL4xx</td><td>ссылки на вещества существуют, граф ведёт к целевой субстанции</td><td>обход графа</td><td><span class="chip fail">failed</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><b>Решение, принятое по итогам исследования блока 1:</b> в базах менее 12% одностадийных реакций сбалансированы,
+    и «несбалансированные реакции — правило, а не исключение». Строгий баланс как блокирующая проверка забраковал бы почти всю литературу.
+    Поэтому блокирует только появление тяжёлых атомов «из ниоткуда», а строгий баланс выдаёт предупреждение с подсказкой.</div>
+  <p><b>Данные:</b> на входе RouteSpec v0.1 (<code>schemas/route/v0.1/route.schema.json</code>), на выходе <code>LintReport</code>, который ложится в поле <code>verification</code> маршрута. <b>Где работает модель:</b> нигде. Модель лишь потребляет диагностики позже, в цикле ремонта.</p>
+  <p class="note">Следующие итерации: картирование атомов и шаблоны (RXNMapper), прямое предсказание, доступность сырья, классы ICH Q3C/Q3D, флаги опасности, PMI и E-factor, проверка цитат.</p>
+
+  <h3>Почему первой выбрана именно она</h3>
+  <ol class="tight">
+    <li><b>Даёт главную метрику ТЗ с первого дня:</b> долю шагов, проходящих детерминированные проверки. Без неё нельзя измерить ни baseline «LLM без обвязки», ни прогресс.</li>
+    <li><b>Все остальные модули зависят от неё:</b> статусы в UI, цикл ремонта, ранжирование, экспорт, бенчмарк.</li>
+    <li><b>Не зависит от UI, лимитов моделей и сбора литературы:</b> делается и покрывается тестами за 1–2 недели.</li>
+    <li><b>Переиспользуема:</b> подходит как самостоятельный инструмент для любых генераторов маршрутов (в том числе для интеграции в общую платформу компании).</li>
+    <li><b>Низкий риск:</b> RDKit — зрелая библиотека, проверки детерминированы.</li>
+  </ol>
+
+  <h3>Спайк: осуществимость подтверждена</h3>
+  <p>RouteSpec v0.1 и прототип <code>spikes/route_lint_v0.py</code> (RDKit 2026.09.1) проверены на трёх примерах для согласования формата.
+    Это учебные иллюстрации на бытовой химии (этанол, уксусная кислота, этилацетат), а не маршруты лекарств.</p>
+  <pre><code>valid/toy-two-step.json: 2 steps · valid 2/2
+  S1   ? hypothesis   RL302 only model provenance: status capped at hypothesis
+  S2   ? hypothesis   RL302 only model provenance: status capped at hypothesis
+
+lint-fail/toy-broken.json: 3 steps · valid 1/3
+  route  RL102 etoh: declared InChIKey != computed LFQSCWFLJHTTHZ-UHFFFAOYSA-N
+  route  RL101 bad: SMILES does not parse/sanitize
+  S1   ? hypothesis  RL201 not strictly balanced: products lack {'O': 1, 'H': 2}; hint: maybe undeclared byproduct H2O
+                     RL301 no provenance at all: status capped at hypothesis
+  S2   ✗ failed      RL401 unknown substance 'ghost'
+  S3   ✗ failed      RL203 product heavy atoms missing from reactants: {'C': 2, 'O': 1}
+
+schema-invalid/missing-disclaimer-bad-status.json
+  ✗ schema invalid
+    RL001 route: 'disclaimer' is a required property
+    RL001 steps/0/verification/0/status: 'probably_fine' is not one of ['literature', 'computed', 'hypothesis', 'failed']</code></pre>
+  <p class="note">Каждая заложенная ошибка поймана своим кодом, лишних срабатываний нет. Обратите внимание: даже корректный по химии маршрут получает «гипотезу», пока у него нет реального источника. Это правило доверия, а не ошибка.</p>
+  <h4>Критерии готовности</h4>
+  <ul class="tight">
+    <li>RouteSpec v0.1 со схемой и примерами трёх видов (валидные, проваливающие линтер, невалидные по схеме) — <span class="chip ok">черновик готов</span></li>
+    <li>Проверки RL0–RL4 с позитивными, негативными и граничными тестами, покрытие <code>validation/</code> ≥ 90%</li>
+    <li>CLI с текстовым и JSON-выводом, версии проверок и RDKit в отчёте</li>
+    <li>Первый замер на маршрутах «LLM без обвязки» → первая цифра baseline</li>
+  </ul>
+</section>
+
+<section id="rules">
+  <div class="sec-head"><div class="num">+</div><div><div class="kicker">Сверх плана</div><h2>Инженерная база: правила репозитория как код</h2></div></div>
+  <p>Проект на год делают человек и несколько ИИ-агентов. Чтобы правила не устаревали, они оформлены как код (ADR-0001):</p>
+  <div class="grid2">
+    <div class="card"><h4>Структура правила</h4><pre><code>### TRUST-003 · MUST · Статусы literature/computed
+    выставляет только детерминированный код
+- **Почему:** LLM не может подтверждать саму себя
+- **Проверка:** auto:test [todo]</code></pre></div>
+    <div class="card"><h4>Что сделано</h4><ul class="tight">
+      <li><b>76 правил</b> в 11 областях: CORE, SAFE, TRUST, PY, LLM, SCHEMA, UI, EVAL, DATA, GIT, DOC</li>
+      <li>Валидатор и автогенерируемый реестр; доля автоматизированных правил видна: <b>6/76 (8%)</b>, долг автоматизации <b>39</b></li>
+      <li>Хуки блокируют запись в секреты, сырые данные и замороженный тест-сплит; CI, pre-commit</li>
+      <li>Сабагенты <code>rule-auditor</code> и <code>reviewer-2</code> (строгий рецензент экспериментов)</li>
+    </ul></div>
+  </div>
+  <p class="note">Проверено: валидатор поймал 7 из 7 подброшенных нарушений, хук корректно отработал 8 из 8 путей. Каждую неделю переводим хотя бы одно правило из «ревью» в автоматическую проверку.</p>
+</section>
+
+<section id="fails">
+  <div class="sec-head"><div class="num">!</div><div><div class="kicker">Неудачи тоже результат</div><h2>Что не вышло и почему</h2></div></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Что</th><th>Почему</th><th>Что делаем</th></tr></thead>
+    <tbody>
+      
+      <tr><td>Стабильный доступ к Flash и Pro на бесплатном тире</td><td>503 (перегрузка), 429 (квота), у Pro нулевая квота</td><td>gateway с ретраями и fallback, кассеты, локальная Gemma; повторные замеры в разное время</td></tr>
+      <tr><td>Официальные RPM, TPM и RPD по моделям</td><td>не опубликованы на странице лимитов</td><td>снять в AI Studio своего проекта</td></tr>
+      <tr><td>Живой прогон отборочного проекта <b>целиком</b></td><td>смена модели конфигом сработала, но второй вызов упал на 503: обвязка не повторяет запрос при 5xx</td><td>это и есть требование к нашему gateway: backoff и fallback (этап 2)</td></tr>
+      <tr><td>Базовая линия «сколько длится ручная разведка маршрута»</td><td>опубликованных данных нет</td><td>хронометраж с экспертом на тех же МНН (метрики M7, M10)</td></tr>
+      <tr><td>Квота по фтору в выборке бенчмарка</td><td>MaxMin по каркасам оптимизирует разнообразие скелетов и не следит за заместителями: 5% против 15,8% в референсе</td><td>добавить квоту (фильтр F8) и пересобрать выборку</td></tr>
+      <tr><td>Доступ к профильным полным текстам процессной химии</td><td>почти не в открытом доступе (OPRD: 191 запись в Europe PMC из 7 069 DOI)</td><td>запрос в библиотеку ИТМО о TDM-доступе ACS и Elsevier; до тех пор патенты и OA</td></tr>
+      <tr><td>Локальная модель на ноутбуке (MLX)</td><td>скачивание весов зависло; GPU-мощности при этом подтверждены на Kaggle</td><td>повторить загрузку; основной путь для замороженных прогонов — Kaggle</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="plan">
+  <div class="sec-head"><div class="num">→</div><div><div class="kicker">Следующая неделя</div><h2>План и риски</h2></div></div>
+  <h3>Этап 2: данные, инструменты и первая цифра</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>#</th><th>Задача</th><th>Проверяемый результат</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>route-lint v0 в <code>backend/app/validation</code>: проверки RL0–RL4, CLI, тесты</td><td>покрытие ≥ 90%, CI зелёный</td></tr>
+      <tr><td>2</td><td>LLM-gateway: роли и профили в конфиге, ретраи с backoff, fallback-цепочка, кассеты, трассы (ADR)</td><td>тот же smoke-тест проходит без ручных повторов; тесты идут без сети</td></tr>
+      <tr><td>3</td><td>Baseline «LLM без обвязки» на dev-подмножестве бенчмарка → route-lint</td><td><b>первая цифра:</b> доля валидных шагов у одной LLM, с доверительным интервалом</td></tr>
+      <tr><td>4</td><td>Список кандидатов бенчмарка по методике отбора (раздел 5–6), согласование с экспертом</td><td>dev/test-сплит зафиксирован (EVAL-002)</td></tr>
+      <tr><td>5</td><td>Адаптеры PubChem и ChEMBL: МНН → структура → статус одобрения</td><td>разрешение МНН с provenance, кэш</td></tr>
+      <tr><td>6</td><td>Встреча с экспертом: подготовлено 19 вопросов (Q-001…Q-019), первыми идут Q-001 (критерии «осмысленного» маршрута), Q-005 (блокирующие проверки), Q-010 (время ручной разведки), Q-012 (строгость баланса), Q-015 (состав бенчмарка), Q-017 (участие в слепой оценке)</td><td>ответы в <code>docs/expert/questions.md</code>, хронометраж для M7 и M10</td></tr>
+      <tr><td>8</td><td>ADR о лицензии данных бенчмарка (ORD под CC BY-SA, ShareAlike наследуется) и запрос в библиотеку ИТМО о TDM-доступе ACS и Elsevier</td><td>решение зафиксировано до первого публичного релиза</td></tr>
+      <tr><td>7</td><td>Автоматизировать хотя бы одно правило (валидация примеров RouteSpec в CI, SCHEMA-003)</td><td>долг автоматизации 39 → ≤ 38</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Риски</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Риск</th><th>Вероятность</th><th>Влияние</th><th>Митигация</th></tr></thead>
+    <tbody>
+      <tr><td>Нестабильность и лимиты бесплатного тира моделей</td><td><span class="chip fail">высокая</span></td><td>срыв прогонов</td><td>ретраи и fallback, кассеты, локальная Gemma на Kaggle, повторные замеры</td></tr>
+      <tr><td>Доступность облачных API может меняться</td><td><span class="chip part">средняя</span></td><td>остановка генерации</td><td>архитектура с профилями провайдеров; профиль <code>local</code> обязан проходить те же тесты</td></tr>
+      <tr><td>Лицензии данных и полнотекстов</td><td><span class="chip part">средняя</span></td><td>нельзя опубликовать бенчмарк</td><td>карточки датасетов (DATA-001), только открытые источники в публичных артефактах</td></tr>
+      <tr><td>Неполнота открытых данных о маршрутах</td><td><span class="chip part">средняя</span></td><td>низкий recall</td><td>гибрид «литература + ретросинтез», честный отчёт о покрытии</td></tr>
+      <tr><td>Конфликты зависимостей (AiZynthFinder: Python &lt; 3.13, старые пины)</td><td><span class="chip part">средняя</span></td><td>хрупкое окружение</td><td>отдельный сервис или контейнер</td></tr>
+      <tr><td>Расползание объёма</td><td><span class="chip part">средняя</span></td><td>нет работающей системы от ввода до экспорта</td><td>сначала вертикальный срез: МНН → маршрут → route-lint → схема</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="sources">
+  <div class="sec-head"><div class="num">§</div><div><div class="kicker">На что опирались</div><h2>Источники</h2></div></div>
+  <p>Всего в исследовательских заметках <b>≈ 465 источников</b> с датой доступа 13.10.2026:</p>
+  <ul class="tight">
+    <li>проблема и метрики — 106;</li>
+    <li>рынок — 134;</li>
+    <li>данные и RAG — 150;</li>
+    <li>модели и окружение — 75.</li>
+  </ul>
+  <p>Полные списки лежат в <code>docs/research/01–04</code>. Каждое число в этом отчёте взято из заметки со ссылкой на источник или из наших логов. Ниже ключевые источники, на которых держатся выводы.</p>
+  <div class="grid2">
+    <div class="card"><h4>Проблема и рынок</h4><ul class="tight">
+      <li>ICH Q11 — <a href="https://database.ich.org/sites/default/files/Q11%20Guideline.pdf">database.ich.org</a>; критерии SELECT — <a href="https://learning.acsgcipr.org/process-design/route-selection/recap-of-the-select-criteria/">ACS GCI PR</a></li>
+      <li>Carey et al., OBC 2006 — <a href="https://doi.org/10.1039/b602413k">10.1039/b602413k</a></li>
+      <li>iGAL 2.0, ACS Sustain. Chem. Eng. 2022 — <a href="https://doi.org/10.1021/acssuschemeng.1c01940">10.1021/acssuschemeng.1c01940</a></li>
+      <li>Ребалансировка реакций (&lt;12% сбалансированы), J Cheminform 2024 — <a href="https://doi.org/10.1186/s13321-024-00875-4">10.1186/s13321-024-00875-4</a></li>
+      <li>Evaluate World Preview 2026 — <a href="https://www.evaluate.com/press-release/evaluate-2026-world-preview-report-pharmaceutical-market/">evaluate.com</a></li>
+      <li>«Фарма-2030» — <a href="https://pharmprom.news/wp-content/uploads/pharma-2030.pdf">текст стратегии</a>; импорт субстанций (ГИЛС и НП) — <a href="https://pharmvestnik.ru/content/news/Minpromtorg-otmetil-snijenie-importa-farmsubstancii.html">Фармвестник</a>; глубина локализации — <a href="https://gxpnews.net/2024/12/syrevoj-vopros-kak-izbavitsya-ot-importozavisimosti-v-sfere-proizvodstva-substanczij/">GxP News</a></li>
+      <li>Segler et al., Nature 2018 — <a href="https://doi.org/10.1038/nature25978">10.1038/nature25978</a></li>
+      <li>AiZynthFinder, J Cheminform 2020 и 2024 — <a href="https://doi.org/10.1186/s13321-020-00472-1">10.1186/s13321-020-00472-1</a>, <a href="https://doi.org/10.1186/s13321-024-00860-x">10.1186/s13321-024-00860-x</a></li>
+      <li>ASKCOS v2 — <a href="https://arxiv.org/html/2501.01835v1">arXiv:2501.01835</a>; Syntheseus — <a href="https://arxiv.org/html/2310.19796v3">arXiv:2310.19796</a></li>
+      <li>PaRoutes 2.0 — <a href="https://github.com/MolecularAI/PaRoutes">GitHub</a>; отключение IBM RXN — <a href="https://github.com/rxn4chemistry/rxn4chemistry">GitHub</a> (оба перепроверены вручную)</li>
+    </ul></div>
+    <div class="card"><h4>LLM, данные, окружение</h4><ul class="tight">
+      <li>Guo et al., NeurIPS 2023 D&amp;B — <a href="https://arxiv.org/html/2305.18365v3">arXiv:2305.18365</a></li>
+      <li>Evaluating LLMs in Scientific Discovery — <a href="https://arxiv.org/html/2512.15567v1">arXiv:2512.15567</a></li>
+      <li>ChemCrow, Nat Mach Intell 2024 — <a href="https://doi.org/10.1038/s42256-024-00832-8">10.1038/s42256-024-00832-8</a></li>
+      <li>LLM-Syn-Planner — <a href="https://arxiv.org/html/2505.07027v1">arXiv:2505.07027</a>; AOT* — <a href="https://aclanthology.org/2026.findings-acl.1734/">ACL Anthology</a></li>
+      <li>Выдуманные ссылки, Sci Rep 2023 — <a href="https://doi.org/10.1038/s41598-023-41032-5">10.1038/s41598-023-41032-5</a></li>
+      <li>ChemRAG-Bench — <a href="https://arxiv.org/abs/2505.07671">arXiv:2505.07671</a></li>
+      <li>USPTO (Lowe), CC0 — <a href="https://doi.org/10.6084/m9.figshare.5104873.v1">figshare</a>; ORD — <a href="https://github.com/open-reaction-database/ord-data">ord-data</a>; ChEMBL — <a href="https://ftp.ebi.ac.uk/pub/databases/chembl/ChEMBLdb/latest/">EBI FTP</a>; Orange Book — <a href="https://www.fda.gov/drugs/drug-approvals-and-databases/orange-book-data-files">FDA</a></li>
+      <li>Gemini API: <a href="https://ai.google.dev/gemini-api/docs/rate-limits">rate limits</a>, <a href="https://ai.google.dev/gemini-api/terms">terms</a>, <a href="https://ai.google.dev/gemini-api/docs/available-regions">regions</a></li>
+      <li>Инцидент LiteLLM 03.2026 — <a href="https://docs.litellm.ai/blog/security-update-march-2026">docs.litellm.ai</a></li>
+    </ul></div>
+  </div>
+  <p class="note">Собственные артефакты недели: логи моделей <code>docs/reports/assets/model-check-run1.json</code> и <code>-run2.json</code>, вывод спайка <code>route-lint-spike.txt</code>, прогон отборочного проекта (лог в рабочей копии), реестр правил <code>docs/rules/REGISTRY.md</code>.</p>
+</section>
+
+</main>
+</div>
+<footer class="wrap">synthroute · Этап 1 · отчёт сгенерирован из материалов репозитория (<code>docs/</code>); числа проверены по логам. Маршруты синтеза в рамках проекта не являются подтверждённой технологией и требуют экспериментальной проверки квалифицированными специалистами в лицензированных условиях.</footer>
+<script>
+(function(){
+  var btn=document.getElementById('themeBtn'), root=document.documentElement;
+  try{var saved=localStorage.getItem('theme'); if(saved) root.setAttribute('data-theme',saved);}catch(e){}
+  btn.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+    var next=cur==='dark'?'light':'dark'; root.setAttribute('data-theme',next);
+    try{localStorage.setItem('theme',next);}catch(e){}
+  });
+})();
+</script>
+</body>
+</html>

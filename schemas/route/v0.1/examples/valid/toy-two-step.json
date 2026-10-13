@@ -1,0 +1,45 @@
+{
+  "schema_version": "0.1.0",
+  "route": {
+    "id": "toy-ethyl-acetate",
+    "target_id": "etoac",
+    "title": "FORMAT ILLUSTRATION ONLY: textbook two-step toy route (not a drug, not a process recommendation)",
+    "strategy_tags": ["toy", "format-demo"],
+    "disclaimer": "Учебная иллюстрация формата. Маршруты не являются подтверждённой технологией и требуют экспериментальной проверки квалифицированными специалистами в лицензированных условиях.",
+    "version": 1,
+    "parent_version": null
+  },
+  "substances": [
+    { "id": "etoh", "name": "ethanol", "smiles": "CCO", "inchikey": "LFQSCWFLJHTTHZ-UHFFFAOYSA-N", "role": "starting_material", "sourcing": "buy",
+      "availability": { "status": "available" } },
+    { "id": "o2", "name": "oxygen", "smiles": "O=O", "role": "reagent", "sourcing": "buy" },
+    { "id": "acoh", "name": "acetic acid", "smiles": "CC(=O)O", "inchikey": "QTBSBXVTEAMEQO-UHFFFAOYSA-N", "role": "intermediate", "sourcing": "make" },
+    { "id": "h2o", "name": "water", "smiles": "O", "role": "byproduct", "sourcing": "n/a" },
+    { "id": "etoac", "name": "ethyl acetate", "smiles": "CCOC(C)=O", "inchikey": "XEKOWRVHYACXOJ-UHFFFAOYSA-N", "role": "target", "sourcing": "make" }
+  ],
+  "steps": [
+    {
+      "id": "S1",
+      "reaction_type": "oxidation",
+      "inputs": [ { "substance_id": "etoh", "coefficient": 1 }, { "substance_id": "o2", "coefficient": 1 } ],
+      "outputs": [ { "substance_id": "acoh", "coefficient": 1 }, { "substance_id": "h2o", "coefficient": 1 } ],
+      "process_mode": "unknown",
+      "provenance": [ { "kind": "model", "ref": "format-demo" } ],
+      "verification": []
+    },
+    {
+      "id": "S2",
+      "reaction_type": "esterification",
+      "inputs": [ { "substance_id": "acoh", "coefficient": 1 }, { "substance_id": "etoh", "coefficient": 1 } ],
+      "outputs": [ { "substance_id": "etoac", "coefficient": 1 }, { "substance_id": "h2o", "coefficient": 1 } ],
+      "process_mode": "batch",
+      "scale": {
+        "lab": { "equipment": ["reactor", "distillation"] },
+        "plant": { "equipment": ["reactor", "distillation"], "solvent_recycling": true }
+      },
+      "provenance": [ { "kind": "model", "ref": "format-demo" } ],
+      "verification": []
+    }
+  ],
+  "metrics": { "step_count": 2 }
+}
