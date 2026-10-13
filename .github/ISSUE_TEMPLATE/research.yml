@@ -1,0 +1,21 @@
+name: Исследовательский вопрос / эксперимент
+description: Гипотеза, которую нужно проверить на бенчмарке
+labels: [research]
+body:
+  - type: textarea
+    id: hypothesis
+    attributes:
+      label: Гипотеза
+      description: Если <изменение>, то <метрика> изменится на <ожидание>, потому что <механизм>
+    validations:
+      required: true
+  - type: input
+    id: rq
+    attributes:
+      label: Исследовательский вопрос из protocol.md
+      placeholder: RQ2
+  - type: textarea
+    id: setup
+    attributes:
+      label: Установка
+      description: Сплит (только dev), модели, число прогонов, бюджет, baseline (EVAL-003, EVAL-004)

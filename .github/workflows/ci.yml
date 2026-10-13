@@ -1,0 +1,77 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rules:
+    name: rules (ADR-0001)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python scripts/check_rules.py --check
+
+  secrets:
+    name: secrets (CORE-004)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  backend:
+    name: backend (PY-*, LLM-006)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - id: present
+        working-directory: .
+        run: echo "yes=$([ -f backend/pyproject.toml ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+      - if: steps.present.outputs.yes == 'true'
+        uses: astral-sh/setup-uv@v5
+      - if: steps.present.outputs.yes == 'true'
+        run: uv sync --locked
+      - if: steps.present.outputs.yes == 'true'
+        run: uv run ruff check . && uv run ruff format --check .
+      - if: steps.present.outputs.yes == 'true'
+        run: uv run pytest -q
+        env:
+          LLM_MODE: replay # LLM-006: cassettes only, no network or keys
+
+  frontend:
+    name: frontend (UI-*)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - id: present
+        working-directory: .
+        run: echo "yes=$([ -f frontend/package.json ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+      - if: steps.present.outputs.yes == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - if: steps.present.outputs.yes == 'true'
+        run: npm ci && npm run lint && npm run type-check && npm test --if-present

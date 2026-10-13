@@ -1,0 +1,33 @@
+# Secrets (CORE-004)
+.env
+.env.*
+!.env.example
+
+# Data (DATA-002, DATA-004)
+data/raw/
+data/cache/
+eval/runs/**/artifacts/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+frontend/dist/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Claude Code local overrides
+.claude/settings.local.json
+CLAUDE.local.md

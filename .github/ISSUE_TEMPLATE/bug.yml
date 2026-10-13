@@ -1,0 +1,25 @@
+name: Баг
+description: Что-то работает не так
+labels: [bug]
+body:
+  - type: textarea
+    id: repro
+    attributes:
+      label: Минимальное воспроизведение
+      description: Ввод, шаги, run_id из логов (CORE-002)
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Ожидалось и получилось
+    validations:
+      required: true
+  - type: dropdown
+    id: trust
+    attributes:
+      label: Затронута достоверность маршрута?
+      options:
+        - Нет
+        - Да — неверный статус проверки или источник (TRUST)
+        - Да — гейт безопасности или дисклеймер (SAFE)

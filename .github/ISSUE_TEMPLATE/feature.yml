@@ -1,0 +1,28 @@
+name: Фича
+description: Новая возможность платформы
+labels: [feature]
+body:
+  - type: textarea
+    id: user
+    attributes:
+      label: Кто и зачем
+      description: Пользователь (фармаколог, технолог, исследователь) и что он должен понять или сделать за 10 секунд
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Ожидаемый результат и как его измерить
+      description: Какая метрика проекта изменится
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Минимальный проверяемый шаг
+      description: Самая маленькая версия, которую можно показать (CORE-001)
+  - type: input
+    id: rules
+    attributes:
+      label: Затрагиваемые правила
+      placeholder: TRUST-001, SCHEMA-002

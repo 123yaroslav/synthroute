@@ -1,0 +1,45 @@
+# Install once: `uv tool install pre-commit && pre-commit install --hook-type pre-commit --hook-type commit-msg`
+# Pinned revs are a starting point: run `pre-commit autoupdate` after installing.
+default_install_hook_types: [pre-commit, commit-msg]
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files # DATA-004
+        args: ["--maxkb=1024"]
+      - id: detect-private-key # CORE-004
+      - id: check-json
+      - id: check-yaml
+      - id: check-toml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        args: ["--markdown-linebreak-ext=md"]
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.21.2
+    hooks:
+      - id: gitleaks # CORE-004
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
+    hooks:
+      - id: ruff # PY-002
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.6.0
+    hooks:
+      - id: conventional-pre-commit # GIT-003
+        stages: [commit-msg]
+        args: [feat, fix, docs, rules, exp, refactor, perf, test, build, ci, chore]
+
+  - repo: local
+    hooks:
+      - id: check-rules # ADR-0001
+        name: check repository rules
+        entry: python3 scripts/check_rules.py --check
+        language: system
+        pass_filenames: false
+        files: ^(\.claude/rules/|AGENTS\.md|docs/rules/)

@@ -1,0 +1,30 @@
+name: Изменение правил
+description: Добавить, изменить или вывести правило репозитория
+labels: [rules]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Тип
+      options: [Новое правило, Изменение, Вывод из оборота]
+    validations:
+      required: true
+  - type: textarea
+    id: rule
+    attributes:
+      label: Формулировка и уровень
+      description: Одна императивная строка + MUST, SHOULD или MAY
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Почему
+      description: Какой инцидент или риск это предотвращает
+    validations:
+      required: true
+  - type: textarea
+    id: check
+    attributes:
+      label: Как проверять автоматически
+      description: Хук, линтер, тест или схема. Если пока никак, почему.

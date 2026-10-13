@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use synthroute, please cite it as below."
+title: "synthroute: verifier-gated AI synthesis planning"
+type: software
+authors:
+  - family-names: Rogoza
+    given-names: Yaroslav
+    affiliation: "ITMO University"
+repository-code: "https://github.com/123yaroslav/synthroute" # TODO: confirm after the repo is created
+version: 0.0.0
+date-released: 2026-10-13
+keywords:
+  - retrosynthesis
+  - LLM agents
+  - verification
+  - benchmark
