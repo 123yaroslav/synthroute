@@ -14,7 +14,10 @@ Funnel (docs/research/03-data-and-rag.md, section 2.1), applied in this order:
   F6  regulated-substance exclusion, FAIL-CLOSED (SAFE-002): openFDA NDC active ingredients with a DEA
       schedule + 21 CFR 1308.11-1308.15 text (eCFR). If either source fails, the run aborts before writing.
   F5  documentation proxy: Europe PMC hit count for the INN with "synthesis"/"process development"; keep >= 2
-  F7  diversity: one molecule per generic Bemis-Murcko scaffold, then RDKit MaxMinPicker (Morgan r=2, 2048 bits)
+  F7  scaffold de-duplication: one representative per generic Bemis-Murcko scaffold (most documented first)
+  F8  sample of 40: greedy MaxMin (Morgan r=2, 2048 bits) constrained by class quotas taken from the reference
+      shares of the structure-level classes (N-heterocycle, fluorine, >=1 stereocentre); the unconstrained
+      MaxMin pick is also computed and reported as a baseline, so the cost of the quota is visible
 
 Outputs (identifiers and computed properties only; no synthesis information of any kind):
   eval/benchmark/candidates_v0.csv   final pool with labels and the selected_in_40 flag
@@ -103,6 +106,9 @@ PEPTIDE_MIN_AMIDES = 8
 COVERAGE_TOLERANCE = (
     0.10  # +-10 percentage points (docs/research/03-data-and-rag.md, section 2.2)
 )
+# F8 quota window around the reference share: half the coverage tolerance, so a sample that satisfies the
+# quota lands inside the +-10 pp band with room to spare.
+QUOTA_TOLERANCE = 0.05
 EMPTY_CELL_MIN_SHARE = 0.05  # reference share >= 5% with zero in the sample is a blocking defect (section 3.2)
 
 # Synonym types that are drug names (not trade names, research codes or systematic names).
@@ -835,7 +841,7 @@ def share_row(key: str, groups: dict[str, list[Molecule]]) -> dict[str, Any]:
         lo, hi = bootstrap_ci(values)
         row[gname] = {"n": len(values), "share": float(values.mean()), "ci95": [lo, hi]}
     ref = row["reference"]
-    for gname in ("pool", "sample"):
+    for gname in [g for g in ("pool", "sample", "sample_unquoted") if g in row]:
         share = row[gname]["share"]
         within_ci = ref["ci95"][0] <= share <= ref["ci95"][1]
         within_tol = abs(share - ref["share"]) <= COVERAGE_TOLERANCE + 1e-12
@@ -857,7 +863,7 @@ def continuous_row(key: str, groups: dict[str, list[Molecule]]) -> dict[str, Any
         "mean": {g: float(a.mean()) for g, a in arrays.items()},
         "median": {g: float(np.median(a)) for g, a in arrays.items()},
     }
-    for gname in ("pool", "sample"):
+    for gname in [g for g in ("pool", "sample", "sample_unquoted") if g in arrays]:
         d = ks_statistic(arrays[gname], arrays["reference"])
         row[f"{gname}_vs_reference"] = {
             "ks": d,
@@ -867,6 +873,142 @@ def continuous_row(key: str, groups: dict[str, list[Molecule]]) -> dict[str, Any
             "wasserstein": wasserstein(arrays[gname], arrays["reference"]),
         }
     return row
+
+
+# --------------------------------------------------------------------------------------------- selection
+
+
+@dataclass
+class Quota:
+    """How many positions of the sample a structure-level class must and may take (F8)."""
+
+    key: str
+    title: str
+    reference_share: float
+    target: int
+    lo: int  # window from the reference share: ceil((share - QUOTA_TOLERANCE) * n)
+    hi: int
+    lo_effective: int  # window after checking how many candidates F7 actually left
+    hi_effective: int
+    available: int
+    complement_available: int
+
+    @property
+    def feasible(self) -> bool:
+        return self.lo_effective == self.lo and self.hi_effective == self.hi
+
+    def as_dict(self, selected: int, n: int) -> dict[str, Any]:
+        return {
+            "class": self.key,
+            "reference_share": self.reference_share,
+            "target": self.target,
+            "window": [self.lo, self.hi],
+            "window_effective": [self.lo_effective, self.hi_effective],
+            "available_after_f7": self.available,
+            "selected": selected,
+            "share": (selected / n) if n else None,
+            "satisfied": self.lo_effective <= selected <= self.hi_effective,
+            "feasible": self.feasible,
+        }
+
+
+def plan_quotas(
+    reference: list[Molecule], candidates: list[Molecule], n: int
+) -> list[Quota]:
+    """Turn the reference shares of the structure-level classes into per-class windows for a sample of n."""
+    plans = []
+    for key, title, _ in SHARE_CLASSES:
+        share = float(np.mean([1.0 if m.labels[key] else 0.0 for m in reference]))
+        lo = max(0, math.ceil((share - QUOTA_TOLERANCE) * n - 1e-9))
+        hi = min(n, math.floor((share + QUOTA_TOLERANCE) * n + 1e-9))
+        available = sum(1 for m in candidates if m.labels[key])
+        complement = len(candidates) - available
+        lo_effective = min(lo, available)
+        plans.append(
+            Quota(
+                key=key,
+                title=title,
+                reference_share=share,
+                target=int(round(share * n)),
+                lo=lo,
+                hi=hi,
+                lo_effective=lo_effective,
+                hi_effective=max(hi, n - complement, lo_effective),
+                available=available,
+                complement_available=complement,
+            )
+        )
+    return plans
+
+
+def tanimoto_distances(fps: list[Any]) -> list[float]:
+    """Every pairwise Tanimoto distance inside a set of fingerprints."""
+    return [
+        1.0 - s
+        for i in range(len(fps))
+        for s in DataStructs.BulkTanimotoSimilarity(fps[i], fps[i + 1 :])
+    ]
+
+
+def select_with_quotas(
+    candidates: list[Molecule], fps: list[Any], quotas: list[Quota], n: int
+) -> tuple[list[int], dict[str, int], list[dict[str, Any]]]:
+    """Greedy MaxMin selection under class quotas (F8).
+
+    Phase A fills the lower bound of every quota, rarest class first; phase B spends the remaining positions on
+    diversity alone. Upper bounds hold in both phases. Each step takes the candidate farthest from everything
+    already taken (MaxMin); ties go to the better documented molecule, then to the lower ChEMBL id. There is no
+    random start, so the result depends only on the inputs.
+    """
+    chosen: list[int] = []
+    counts = {q.key: 0 for q in quotas}
+    nearest = [1.0] * len(candidates)  # distance to the closest already chosen molecule
+    taken = [False] * len(candidates)
+    trace: list[dict[str, Any]] = []
+
+    def allowed(i: int) -> bool:
+        labels = candidates[i].labels
+        return not taken[i] and all(
+            not labels[q.key] or counts[q.key] < q.hi_effective for q in quotas
+        )
+
+    def rank(i: int) -> tuple[float, int, tuple[int, str]]:
+        m = candidates[i]
+        return (-nearest[i], -(m.epmc_hits or 0), m.sort_key)
+
+    def take(i: int, reason: str) -> None:
+        taken[i] = True
+        chosen.append(i)
+        for q in quotas:
+            if candidates[i].labels[q.key]:
+                counts[q.key] += 1
+        for j, sim in enumerate(DataStructs.BulkTanimotoSimilarity(fps[i], fps)):
+            nearest[j] = min(nearest[j], 1.0 - sim)
+        trace.append({"chembl_id": candidates[i].chembl_id, "picked_for": reason})
+
+    for q in sorted(quotas, key=lambda x: (x.available, x.key)):
+        while counts[q.key] < q.lo_effective and len(chosen) < n:
+            options = [
+                i
+                for i in range(len(candidates))
+                if allowed(i) and candidates[i].labels[q.key]
+            ]
+            if not options:
+                log(
+                    "f8_quota_stuck",
+                    quota=q.key,
+                    have=counts[q.key],
+                    want=q.lo_effective,
+                )
+                break
+            take(min(options, key=rank), f"quota:{q.key}")
+    while len(chosen) < n:
+        options = [i for i in range(len(candidates)) if allowed(i)]
+        if not options:
+            log("f8_short_pool", wanted=n, got=len(chosen))
+            break
+        take(min(options, key=rank), "diversity")
+    return chosen, counts, trace
 
 
 # --------------------------------------------------------------------------------------------- outputs
@@ -990,10 +1132,13 @@ LIMITATIONS = """\
    списками WHO ещё не сделаны. МНН берётся из синонимов ChEMBL с `syn_type = INN`.
 5. **F3 — эвристики.** Пептиды определяются числом α-аминоацильных амидных связей, металлы — по списку
    элементов, многокомпонентность — после удаления стандартных солей и растворителей RDKit.
-6. **F7 и F8.** MaxMin выбирает структурно далёкие молекулы и по построению смещается к редким каркасам; одна
-   молекула на обобщённый каркас Bemis–Murcko, балансировки по ATC нет. Квоты F8 не применялись: маршруты ещё
-   не собраны, поэтому классы уровня маршрута (защитные группы, каталитические стадии, биокатализ, длина и
-   конвергентность маршрута) здесь не измеряются вообще.
+6. **F7 и F8 — только структурные классы.** MaxMin выбирает структурно далёкие молекулы и по построению
+   смещается к редким каркасам; правило «одна молекула на обобщённый каркас Bemis–Murcko» усиливает это
+   смещение. Квоты F8 возвращают в допуск доли трёх структурных классов (N-гетероцикл, фтор, стереоцентр), но
+   это не стратифицированная выборка: окна квот взяты от долей референса, внутри окна решает только
+   разнообразие, а балансировки по ATC-классам и по году одобрения нет. Классы уровня маршрута (защитные
+   группы, каталитические стадии, биокатализ, длина и конвергентность маршрута) здесь не измеряются вообще:
+   маршрутов ещё нет, и квоты по ним можно будет задать только после их сбора.
 7. **Статистика.** Выборка вложена в пул, пул — в референс, то есть группы не независимы; p-значение KS
    асимптотическое и дано только как ориентир. На 40 позициях доверительные интервалы широкие, а допуск ±10 п.п.
    мягкий. Референс — все одобренные малые молекулы ChEMBL после F1–F3 (включая вещества, которые гейт F6
@@ -1018,11 +1163,14 @@ def render_markdown(report: dict[str, Any]) -> str:
     f6 = report["f6"]
     f5 = report["f5"]
     f7 = report["f7"]
+    f8 = report["f8"]
     share_lines = []
     for row, (_, title, lit) in zip(report["shares"], SHARE_CLASSES):
+        unq = row["sample_unquoted"]
         share_lines.append(
             f"| {title} | {fmt_share(row['reference'])} | {fmt_share(row['pool'])} | {fmt_share(row['sample'])} "
-            f"| {row['sample']['delta_pp']:+.1f} | **{row['sample']['status']}** | {row['pool']['status']} | {lit} |"
+            f"| {row['sample']['delta_pp']:+.1f} | **{row['sample']['status']}** "
+            f"| {100 * unq['share']:.1f}% ({unq['delta_pp']:+.1f}) | {unq['status']} | {row['pool']['status']} | {lit} |"
         )
     cont_lines = []
     for row, (_, title) in zip(report["continuous"], CONTINUOUS):
@@ -1047,15 +1195,29 @@ def render_markdown(report: dict[str, Any]) -> str:
         for row, (_, t) in zip(report["continuous"], CONTINUOUS)
         if row["sample_vs_reference"]["ks_p_asymptotic"] < 0.05
     ]
+    gaps_unquoted = [
+        t
+        for row, (_, t, _) in zip(report["shares"], SHARE_CLASSES)
+        if row["sample_unquoted"]["status"] == "gap"
+    ]
+    quota_lines = "\n".join(
+        f"| {title} | {100 * q['reference_share']:.1f}% | {q['target']} | {q['window'][0]}–{q['window'][1]} "
+        f"| {q['available_after_f7']} | **{q['selected']}** ({100 * q['share']:.1f}%) "
+        f"| {'да' if q['satisfied'] else 'НЕТ'} |"
+        for q, (_, title, _) in zip(f8["quotas"], SHARE_CLASSES)
+    )
     summary = [
-        f"- Покрыты выборкой из {f7['n_selected']}: {', '.join(covered) if covered else 'нет'}.",
+        f"- Покрыты выборкой из {f8['n_selected']}: {', '.join(covered) if covered else 'нет'}.",
         f"- Пробелы (gap): {', '.join(gaps) if gaps else 'нет'}.",
+        f"- Квоты F8 выполнены: {'да' if f8['all_quotas_satisfied'] else 'НЕТ'}"
+        f" (все окна достижимы при данном пуле: {'да' if f8['all_quotas_feasible'] else 'НЕТ'}). "
+        f"Без квот пробелы были бы: {', '.join(gaps_unquoted) if gaps_unquoted else 'нет'}.",
         "- Непрерывные свойства со сдвигом выборки относительно референса (KS, p≈ < 0,05): "
         f"{', '.join(shifted) if shifted else 'не обнаружено'}.",
         "- Классы уровня маршрута (защитные группы, катализ, биокатализ, длина, конвергентность) не оценивались: "
         "маршрутов ещё нет.",
     ]
-    return f"""# Покрытие реальных классов задачи: пул кандидатов v0 и выборка из {f7['n_selected']}
+    return f"""# Покрытие реальных классов задачи: пул кандидатов v0 и выборка из {f8['n_selected']}
 
 > Файл сгенерирован скриптом `eval/select_benchmark.py` (EVAL-001); правки руками будут перезаписаны.
 > Только идентификаторы и вычисленные свойства молекул: маршрутов, реагентов и условий здесь нет (SAFE-004,
@@ -1072,14 +1234,14 @@ def render_markdown(report: dict[str, Any]) -> str:
 - **Параметры:** seed {report['params']['seed']}, bootstrap {report['params']['n_boot']} повторов, Morgan r=2 2048 бит,
   патентная область `{report['params']['patent_scope']}`, порог Europe PMC ≥ {report['params']['epmc_min_hits']}
 
-## Воронка отбора F1 → F7
+## Воронка отбора F1 → F8
 
 | Фильтр | Критерий | Осталось | Отсеяно |
 |---|---|---|---|
 {funnel_rows}
 
-Порядок применения: F1 → F2 → F3 → F4 → F6 → F5 → F7, чтобы запросы к Europe PMC не отправлялись по веществам,
-которые отсекает гейт. Причины исключения по молекулам: `eval/reports/exclusions.csv`
+Порядок применения: F1 → F2 → F3 → F4 → F6 → F5 → F7 → F8, чтобы запросы к Europe PMC не отправлялись по
+веществам, которые отсекает гейт. Причины исключения по молекулам: `eval/reports/exclusions.csv`
 ({report['exclusions_written']} строк; ещё {report['exclusions_redacted']} строк не записаны, потому что
 соответствующие вещества совпали с гейтом F6, а их названия не выводятся).
 
@@ -1117,13 +1279,34 @@ def render_markdown(report: dict[str, Any]) -> str:
 ≥ {report['params']['epmc_min_hits']}. Запрошено {f5['queried']}, ошибок {f5['errors']}, ниже порога {f5['below_threshold']};
 медиана числа записей у прошедших — {f5['median_hits_kept']}.
 
-### F7: разнообразие
+### F7: дедупликация каркасов
 
 В пуле {f7['pool']} молекул и {f7['n_scaffolds']} обобщённых каркасов Bemis–Murcko (из них ациклических молекул:
-{f7['n_acyclic']}). На каждый каркас оставлен представитель с наибольшим числом записей Europe PMC, затем
-`MaxMinPicker.LazyBitVectorPick` (seed {report['params']['seed']}) выбрал {f7['n_selected']}. Минимальное
-попарное расстояние Танимото внутри выборки: {f7['min_pairwise_tanimoto_distance']:.3f}, медиана —
-{f7['median_pairwise_tanimoto_distance']:.3f}.
+{f7['n_acyclic']}). На каждый каркас оставлен один представитель — с наибольшим числом записей Europe PMC, при
+равенстве с меньшим ChEMBL ID. Осталось {f7['n_representatives']} кандидатов на выборку.
+
+### F8: квоты структурных классов + разнообразие
+
+Окно квоты для каждого класса — доля в референсной популяции ±{f8['quota_tolerance_pp']:.0f} п.п. (половина
+допуска покрытия), пересчитанная в число позиций выборки.
+
+| Класс | Доля в референсе | Цель | Окно квоты, позиций | Доступно после F7 | Отобрано | Квота выполнена |
+|---|---|---|---|---|---|---|
+{quota_lines}
+
+Отбор: жадный MaxMin по Morgan r=2, 2048 бит. Фаза А добирает нижнюю границу каждой квоты, начиная с самого
+редкого класса; фаза Б тратит остальные позиции только на разнообразие; верхние границы действуют в обеих фазах.
+На каждом шаге берётся кандидат, максимально удалённый от всех уже отобранных, при равенстве — более
+документированный, затем с меньшим ChEMBL ID. Случайного старта нет, поэтому результат зависит только от входных
+данных. Позиций, занятых в фазе квот: {f8['picked_for_quota']}; в фазе разнообразия: {f8['picked_for_diversity']}.
+Порядок отбора с причиной каждой позиции записан в `coverage.json` → `f8.selection_order`.
+
+Разнообразие выборки: минимальное попарное расстояние Танимото {f8['min_pairwise_tanimoto_distance']:.3f},
+медиана {f8['median_pairwise_tanimoto_distance']:.3f}. Для сравнения, тот же отбор без квот
+(`MaxMinPicker.LazyBitVectorPick`, seed {report['params']['seed']}): минимум
+{f8['baseline_maxmin_no_quota']['min_pairwise_tanimoto_distance']:.3f}, медиана
+{f8['baseline_maxmin_no_quota']['median_pairwise_tanimoto_distance']:.3f} — это цена квоты в разнообразии.
+Состав выборки без квот: `coverage.json` → `f8.baseline_maxmin_no_quota.chembl_ids`.
 
 ## Доли классов: референс (F1–F3) vs пул vs выборка
 
@@ -1131,8 +1314,11 @@ def render_markdown(report: dict[str, Any]) -> str:
 `covered`, если доля в выборке попадает в интервал референса или отличается от доли референса не более чем на
 ±10 п.п.; `gap` иначе, а также при пустой ячейке (доля в референсе ≥ 5%, в выборке 0).
 
-| Класс | Референс | Пул | Выборка | Δ выборка − референс, п.п. | Статус выборки | Статус пула | Литература (справочно) |
-|---|---|---|---|---|---|---|---|
+Колонка «без квот» — та же выборка, собранная чистым MaxMin (F7 + seed {report['params']['seed']}, без F8):
+она показывает, что именно квоты исправили.
+
+| Класс | Референс | Пул | Выборка (F8) | Δ выборка − референс, п.п. | Статус выборки | Без квот (Δ, п.п.) | Статус без квот | Статус пула | Литература (справочно) |
+|---|---|---|---|---|---|---|---|---|---|
 {chr(10).join(share_lines)}
 
 Литературные доли посчитаны на других популяциях и с другими определениями, поэтому служат только проверкой
@@ -1321,7 +1507,7 @@ def main() -> int:
         len(cleared),
     )
 
-    # F7: one representative per generic scaffold (most documented, then lowest ChEMBL id), then MaxMin.
+    # F7: one representative per generic scaffold (most documented, then lowest ChEMBL id).
     by_scaffold: dict[str, list[Molecule]] = defaultdict(list)
     for m in pool:
         m.scaffold_smiles = generic_scaffold(m.mol)
@@ -1338,37 +1524,54 @@ def main() -> int:
         ),
         key=lambda x: x.sort_key,
     )
+    stage(
+        "F7",
+        "≤1 молекулы на обобщённый каркас Bemis–Murcko (представитель — наиболее документированный)",
+        len(representatives),
+        len(pool),
+    )
+
+    # F8: quotas from the reference shares + greedy MaxMin; the plain MaxMin pick is kept as a baseline.
     generator = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
     fps = [generator.GetFingerprint(m.mol) for m in representatives]
     n_pick = min(SAMPLE_SIZE, len(representatives))
-    picks = list(MaxMinPicker().LazyBitVectorPick(fps, len(fps), n_pick, seed=SEED))
+    quotas = plan_quotas(reference, representatives, n_pick)
+    picks, quota_counts, quota_trace = select_with_quotas(
+        representatives, fps, quotas, n_pick
+    )
     sample = [representatives[i] for i in picks]
     for m in sample:
         m.selected = True
-    sample_fps = [fps[i] for i in picks]
-    distances = [
-        1.0 - s
-        for i in range(len(sample_fps))
-        for s in DataStructs.BulkTanimotoSimilarity(sample_fps[i], sample_fps[i + 1 :])
-    ]
+    distances = tanimoto_distances([fps[i] for i in picks])
+
+    baseline_picks = list(
+        MaxMinPicker().LazyBitVectorPick(fps, len(fps), n_pick, seed=SEED)
+    )
+    sample_unquoted = [representatives[i] for i in baseline_picks]
+    baseline_distances = tanimoto_distances([fps[i] for i in baseline_picks])
+
     stage(
-        "F7",
-        f"≤1 молекулы на обобщённый каркас Bemis–Murcko, MaxMin {SAMPLE_SIZE} (seed {SEED})",
+        "F8",
+        f"квоты структурных классов (±{100 * QUOTA_TOLERANCE:.0f} п.п. от референса) + MaxMin до {SAMPLE_SIZE}",
         len(sample),
-        len(pool),
+        len(representatives),
     )
     if n_pick < SAMPLE_SIZE:
-        log("f7_short_pool", wanted=SAMPLE_SIZE, got=n_pick)
-    funnel.append(
-        {
-            "stage": "F8",
-            "criterion": "квоты классов задачи — не применялись (маршрутов ещё нет)",
-            "n_out": len(sample),
-            "n_excluded": None,
-        }
+        log("f8_short_pool", wanted=SAMPLE_SIZE, got=n_pick)
+    log(
+        "f8_quotas",
+        **{
+            q.key: f"{quota_counts[q.key]}/[{q.lo_effective};{q.hi_effective}]"
+            for q in quotas
+        },
     )
 
-    groups = {"reference": reference, "pool": pool, "sample": sample}
+    groups = {
+        "reference": reference,
+        "pool": pool,
+        "sample": sample,
+        "sample_unquoted": sample_unquoted,
+    }
     shares = [share_row(key, groups) for key, _, _ in SHARE_CLASSES]
     continuous = [continuous_row(key, groups) for key, _ in CONTINUOUS]
 
@@ -1444,13 +1647,44 @@ def main() -> int:
             "pool": len(pool),
             "n_scaffolds": len(by_scaffold),
             "n_acyclic": len(by_scaffold.get("", [])),
+            "n_representatives": len(representatives),
+        },
+        "f8": {
             "n_selected": len(sample),
+            "quota_tolerance_pp": 100 * QUOTA_TOLERANCE,
+            "quotas": [q.as_dict(quota_counts[q.key], len(sample)) for q in quotas],
+            "all_quotas_satisfied": all(
+                q.lo_effective <= quota_counts[q.key] <= q.hi_effective for q in quotas
+            ),
+            "all_quotas_feasible": all(q.feasible for q in quotas),
+            "picked_for_quota": sum(
+                1 for t in quota_trace if t["picked_for"].startswith("quota:")
+            ),
+            "picked_for_diversity": sum(
+                1 for t in quota_trace if t["picked_for"] == "diversity"
+            ),
+            "selection_order": quota_trace,
             "min_pairwise_tanimoto_distance": float(min(distances))
             if distances
             else float("nan"),
             "median_pairwise_tanimoto_distance": float(np.median(distances))
             if distances
             else float("nan"),
+            "baseline_maxmin_no_quota": {
+                "note": "MaxMinPicker.LazyBitVectorPick over the same F7 representatives, seed "
+                f"{SEED}, no quotas: the comparison shows what the quota costs in diversity",
+                "n_selected": len(sample_unquoted),
+                "min_pairwise_tanimoto_distance": float(min(baseline_distances))
+                if baseline_distances
+                else float("nan"),
+                "median_pairwise_tanimoto_distance": float(np.median(baseline_distances))
+                if baseline_distances
+                else float("nan"),
+                "chembl_ids": sorted(
+                    (m.chembl_id for m in sample_unquoted),
+                    key=lambda c: int(re.sub(r"\D", "", c)),
+                ),
+            },
         },
         "shares": shares,
         "continuous": continuous,

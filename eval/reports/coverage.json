@@ -1,11 +1,11 @@
 {
   "schema": "synthroute.coverage/v0",
-  "run_id": "6dd64d8f5392",
-  "generated_at": "2026-10-13T14:12:43+00:00",
+  "run_id": "3f36da42787f",
+  "generated_at": "2026-10-13T15:51:29+00:00",
   "as_of": "2026-10-13",
   "command": "uv run --no-project --python 3.12 --with rdkit --with requests --with pandas --with numpy eval/select_benchmark.py",
-  "git_sha": "3201cf65e8a8fcc55edd527e5d0a80e7729b56e5+uncommitted-eval",
-  "script_sha256": "e86f0e7de332ae08b311babaa23f8795ef70d221675f474fbce27ab28fd54823",
+  "git_sha": "e5a261e71af73fd20db86e3584b9e171f47bbbdf+uncommitted-eval",
+  "script_sha256": "5b3da93fbb34fef9448bf68c10afba88cca394c0bcfdce5593ae652423424a45",
   "versions": {
     "python": "3.12.12",
     "rdkit": "2026.09.1",
@@ -65,7 +65,7 @@
         "n_words": 10728,
         "sha256_text": "243ac8f7b5e598854278dfaf845386642369b243ec7a86a6e02a09f6ed4aff0f"
       },
-      "retrieved_at": "2026-10-13T14:12:42+00:00",
+      "retrieved_at": "2026-10-13T15:51:27+00:00",
       "cached": false
     },
     "europe_pmc": {
@@ -120,15 +120,15 @@
     },
     {
       "stage": "F7",
-      "criterion": "≤1 молекулы на обобщённый каркас Bemis–Murcko, MaxMin 40 (seed 42)",
-      "n_out": 40,
-      "n_excluded": 587
+      "criterion": "≤1 молекулы на обобщённый каркас Bemis–Murcko (представитель — наиболее документированный)",
+      "n_out": 301,
+      "n_excluded": 326
     },
     {
       "stage": "F8",
-      "criterion": "квоты классов задачи — не применялись (маршрутов ещё нет)",
+      "criterion": "квоты структурных классов (±5 п.п. от референса) + MaxMin до 40",
       "n_out": 40,
-      "n_excluded": null
+      "n_excluded": 261
     }
   ],
   "f3_exclusion_reasons": {
@@ -164,9 +164,283 @@
     "pool": 627,
     "n_scaffolds": 301,
     "n_acyclic": 29,
+    "n_representatives": 301
+  },
+  "f8": {
     "n_selected": 40,
-    "min_pairwise_tanimoto_distance": 0.8598130841121495,
-    "median_pairwise_tanimoto_distance": 0.9333333333333333
+    "quota_tolerance_pp": 5.0,
+    "quotas": [
+      {
+        "class": "n_heterocycle",
+        "reference_share": 0.625140924464487,
+        "target": 25,
+        "window": [
+          24,
+          27
+        ],
+        "window_effective": [
+          24,
+          27
+        ],
+        "available_after_f7": 228,
+        "selected": 27,
+        "share": 0.675,
+        "satisfied": true,
+        "feasible": true
+      },
+      {
+        "class": "has_F",
+        "reference_share": 0.15783540022547915,
+        "target": 6,
+        "window": [
+          5,
+          8
+        ],
+        "window_effective": [
+          5,
+          8
+        ],
+        "available_after_f7": 36,
+        "selected": 6,
+        "share": 0.15,
+        "satisfied": true,
+        "feasible": true
+      },
+      {
+        "class": "chiral",
+        "reference_share": 0.5918827508455468,
+        "target": 24,
+        "window": [
+          22,
+          25
+        ],
+        "window_effective": [
+          22,
+          25
+        ],
+        "available_after_f7": 201,
+        "selected": 25,
+        "share": 0.625,
+        "satisfied": true,
+        "feasible": true
+      }
+    ],
+    "all_quotas_satisfied": true,
+    "all_quotas_feasible": true,
+    "picked_for_quota": 31,
+    "picked_for_diversity": 9,
+    "selection_order": [
+      {
+        "chembl_id": "CHEMBL185",
+        "picked_for": "quota:has_F"
+      },
+      {
+        "chembl_id": "CHEMBL1107",
+        "picked_for": "quota:has_F"
+      },
+      {
+        "chembl_id": "CHEMBL1615438",
+        "picked_for": "quota:has_F"
+      },
+      {
+        "chembl_id": "CHEMBL1684",
+        "picked_for": "quota:has_F"
+      },
+      {
+        "chembl_id": "CHEMBL1750",
+        "picked_for": "quota:has_F"
+      },
+      {
+        "chembl_id": "CHEMBL1024",
+        "picked_for": "quota:chiral"
+      },
+      {
+        "chembl_id": "CHEMBL1200660",
+        "picked_for": "quota:chiral"
+      },
+      {
+        "chembl_id": "CHEMBL1237072",
+        "picked_for": "quota:chiral"
+      },
+      {
+        "chembl_id": "CHEMBL959",
+        "picked_for": "quota:chiral"
+      },
+      {
+        "chembl_id": "CHEMBL1219",
+        "picked_for": "quota:chiral"
+      },
+      {
+        "chembl_id": "CHEMBL186",
+        "picked_for": "quota:chiral"
+      },
+      {
+        "chembl_id": "CHEMBL846",
+        "picked_for": "quota:chiral"
+      },
+      {
+        "chembl_id": "CHEMBL588",
+        "picked_for": "quota:chiral"
+      },
+      {
+        "chembl_id": "CHEMBL460",
+        "picked_for": "quota:chiral"
+      },
+      {
+        "chembl_id": "CHEMBL719",
+        "picked_for": "quota:chiral"
+      },
+      {
+        "chembl_id": "CHEMBL1106",
+        "picked_for": "quota:chiral"
+      },
+      {
+        "chembl_id": "CHEMBL168815",
+        "picked_for": "quota:chiral"
+      },
+      {
+        "chembl_id": "CHEMBL1622",
+        "picked_for": "quota:chiral"
+      },
+      {
+        "chembl_id": "CHEMBL1201891",
+        "picked_for": "quota:chiral"
+      },
+      {
+        "chembl_id": "CHEMBL1668",
+        "picked_for": "quota:chiral"
+      },
+      {
+        "chembl_id": "CHEMBL249837",
+        "picked_for": "quota:chiral"
+      },
+      {
+        "chembl_id": "CHEMBL562",
+        "picked_for": "quota:chiral"
+      },
+      {
+        "chembl_id": "CHEMBL1008",
+        "picked_for": "quota:chiral"
+      },
+      {
+        "chembl_id": "CHEMBL1201288",
+        "picked_for": "quota:n_heterocycle"
+      },
+      {
+        "chembl_id": "CHEMBL1444",
+        "picked_for": "quota:n_heterocycle"
+      },
+      {
+        "chembl_id": "CHEMBL443",
+        "picked_for": "quota:n_heterocycle"
+      },
+      {
+        "chembl_id": "CHEMBL1201198",
+        "picked_for": "quota:n_heterocycle"
+      },
+      {
+        "chembl_id": "CHEMBL1292",
+        "picked_for": "quota:n_heterocycle"
+      },
+      {
+        "chembl_id": "CHEMBL127",
+        "picked_for": "quota:n_heterocycle"
+      },
+      {
+        "chembl_id": "CHEMBL708",
+        "picked_for": "quota:n_heterocycle"
+      },
+      {
+        "chembl_id": "CHEMBL535",
+        "picked_for": "quota:n_heterocycle"
+      },
+      {
+        "chembl_id": "CHEMBL608",
+        "picked_for": "diversity"
+      },
+      {
+        "chembl_id": "CHEMBL773",
+        "picked_for": "diversity"
+      },
+      {
+        "chembl_id": "CHEMBL813",
+        "picked_for": "diversity"
+      },
+      {
+        "chembl_id": "CHEMBL566534",
+        "picked_for": "diversity"
+      },
+      {
+        "chembl_id": "CHEMBL374478",
+        "picked_for": "diversity"
+      },
+      {
+        "chembl_id": "CHEMBL1466",
+        "picked_for": "diversity"
+      },
+      {
+        "chembl_id": "CHEMBL942",
+        "picked_for": "diversity"
+      },
+      {
+        "chembl_id": "CHEMBL1293",
+        "picked_for": "diversity"
+      },
+      {
+        "chembl_id": "CHEMBL445",
+        "picked_for": "diversity"
+      }
+    ],
+    "min_pairwise_tanimoto_distance": 0.8518518518518519,
+    "median_pairwise_tanimoto_distance": 0.9293523469994058,
+    "baseline_maxmin_no_quota": {
+      "note": "MaxMinPicker.LazyBitVectorPick over the same F7 representatives, seed 42, no quotas: the comparison shows what the quota costs in diversity",
+      "n_selected": 40,
+      "min_pairwise_tanimoto_distance": 0.8598130841121495,
+      "median_pairwise_tanimoto_distance": 0.9333333333333333,
+      "chembl_ids": [
+        "CHEMBL58",
+        "CHEMBL161",
+        "CHEMBL185",
+        "CHEMBL422",
+        "CHEMBL443",
+        "CHEMBL450",
+        "CHEMBL527",
+        "CHEMBL553",
+        "CHEMBL585",
+        "CHEMBL608",
+        "CHEMBL659",
+        "CHEMBL746",
+        "CHEMBL761",
+        "CHEMBL773",
+        "CHEMBL799",
+        "CHEMBL809",
+        "CHEMBL832",
+        "CHEMBL932",
+        "CHEMBL959",
+        "CHEMBL1024",
+        "CHEMBL1103",
+        "CHEMBL1218",
+        "CHEMBL1293",
+        "CHEMBL1328",
+        "CHEMBL1380",
+        "CHEMBL1444",
+        "CHEMBL1447",
+        "CHEMBL1467",
+        "CHEMBL1550",
+        "CHEMBL6966",
+        "CHEMBL18442",
+        "CHEMBL38827",
+        "CHEMBL61593",
+        "CHEMBL157101",
+        "CHEMBL168815",
+        "CHEMBL296306",
+        "CHEMBL564085",
+        "CHEMBL1200660",
+        "CHEMBL1200907",
+        "CHEMBL1200937"
+      ]
+    }
   },
   "shares": [
     {
@@ -191,6 +465,17 @@
         "blocking_empty_cell": false
       },
       "sample": {
+        "n": 40,
+        "share": 0.675,
+        "ci95": [
+          0.525,
+          0.825
+        ],
+        "delta_pp": 4.985907553551305,
+        "status": "covered",
+        "blocking_empty_cell": false
+      },
+      "sample_unquoted": {
         "n": 40,
         "share": 0.65,
         "ci95": [
@@ -225,6 +510,17 @@
       },
       "sample": {
         "n": 40,
+        "share": 0.15,
+        "ci95": [
+          0.05,
+          0.275
+        ],
+        "delta_pp": -0.7835400225479155,
+        "status": "covered",
+        "blocking_empty_cell": false
+      },
+      "sample_unquoted": {
+        "n": 40,
         "share": 0.05,
         "ci95": [
           0.0,
@@ -258,6 +554,17 @@
       },
       "sample": {
         "n": 40,
+        "share": 0.625,
+        "ci95": [
+          0.475,
+          0.775
+        ],
+        "delta_pp": 3.3117249154453243,
+        "status": "covered",
+        "blocking_empty_cell": false
+      },
+      "sample_unquoted": {
+        "n": 40,
         "share": 0.525,
         "ci95": [
           0.375,
@@ -275,12 +582,14 @@
       "mean": {
         "reference": 363.94102987598654,
         "pool": 350.1665374800639,
-        "sample": 368.4102000000001
+        "sample": 376.25882500000006,
+        "sample_unquoted": 368.4102000000001
       },
       "median": {
         "reference": 345.6470000000001,
         "pool": 320.324,
-        "sample": 355.8830000000001
+        "sample": 363.9730000000001,
+        "sample_unquoted": 355.8830000000001
       },
       "pool_vs_reference": {
         "ks": 0.07104031473579919,
@@ -288,6 +597,11 @@
         "wasserstein": 16.367975417558966
       },
       "sample_vs_reference": {
+        "ks": 0.11271138669673064,
+        "ks_p_asymptotic": 0.6769711829123336,
+        "wasserstein": 21.552551155580623
+      },
+      "sample_unquoted_vs_reference": {
         "ks": 0.11189402480270572,
         "ks_p_asymptotic": 0.6857563847490606,
         "wasserstein": 28.165507779030463
@@ -298,12 +612,14 @@
       "mean": {
         "reference": 2.675207655016912,
         "pool": 2.313112424242426,
-        "sample": 2.422571000000001
+        "sample": 2.918997000000001,
+        "sample_unquoted": 2.422571000000001
       },
       "median": {
         "reference": 2.790700000000001,
         "pool": 2.4206000000000003,
-        "sample": 1.86715
+        "sample": 2.6258300000000006,
+        "sample_unquoted": 1.86715
       },
       "pool_vs_reference": {
         "ks": 0.08642558019523544,
@@ -311,6 +627,11 @@
         "wasserstein": 0.38592852363305524
       },
       "sample_vs_reference": {
+        "ks": 0.10603156708004513,
+        "ks_p_asymptotic": 0.7478738733482061,
+        "wasserstein": 0.6422652559188264
+      },
+      "sample_unquoted_vs_reference": {
         "ks": 0.2026211950394589,
         "ks_p_asymptotic": 0.06982441906837362,
         "wasserstein": 1.0871951364148802
@@ -321,12 +642,14 @@
       "mean": {
         "reference": 80.41767192784668,
         "pool": 82.15735247208931,
-        "sample": 86.01975
+        "sample": 83.25325000000001,
+        "sample_unquoted": 86.01975
       },
       "median": {
         "reference": 74.58500000000001,
         "pool": 73.21000000000001,
-        "sample": 74.71000000000001
+        "sample": 71.89,
+        "sample_unquoted": 74.71000000000001
       },
       "pool_vs_reference": {
         "ks": 0.036207023657329196,
@@ -334,6 +657,11 @@
         "wasserstein": 3.89398086663826
       },
       "sample_vs_reference": {
+        "ks": 0.07694475760992103,
+        "ks_p_asymptotic": 0.9689296339907242,
+        "wasserstein": 6.669774239007893
+      },
+      "sample_unquoted_vs_reference": {
         "ks": 0.10814543404735066,
         "ks_p_asymptotic": 0.7257180247036668,
         "wasserstein": 10.257611330326947
@@ -344,12 +672,14 @@
       "mean": {
         "reference": 0.4326574687371631,
         "pool": 0.44235879289955055,
-        "sample": 0.493336629574088
+        "sample": 0.4617265038859554,
+        "sample_unquoted": 0.493336629574088
       },
       "median": {
         "reference": 0.4,
         "pool": 0.4230769230769231,
-        "sample": 0.475
+        "sample": 0.4557692307692308,
+        "sample_unquoted": 0.475
       },
       "pool_vs_reference": {
         "ks": 0.02802036864221641,
@@ -357,6 +687,11 @@
         "wasserstein": 0.013314928832119828
       },
       "sample_vs_reference": {
+        "ks": 0.11392333709131908,
+        "ks_p_asymptotic": 0.6639204033759126,
+        "wasserstein": 0.06544000088915464
+      },
+      "sample_unquoted_vs_reference": {
         "ks": 0.14726606538895148,
         "ks_p_asymptotic": 0.33824962420456123,
         "wasserstein": 0.08067757622472033
@@ -367,12 +702,14 @@
       "mean": {
         "reference": 1.8759864712514092,
         "pool": 1.985645933014354,
-        "sample": 2.05
+        "sample": 1.9,
+        "sample_unquoted": 2.05
       },
       "median": {
         "reference": 2.0,
         "pool": 2.0,
-        "sample": 1.5
+        "sample": 1.0,
+        "sample_unquoted": 1.5
       },
       "pool_vs_reference": {
         "ks": 0.0329569953375804,
@@ -380,6 +717,11 @@
         "wasserstein": 0.13397668610390417
       },
       "sample_vs_reference": {
+        "ks": 0.04061443066516346,
+        "ks_p_asymptotic": 1.0,
+        "wasserstein": 0.20930101465614437
+      },
+      "sample_unquoted_vs_reference": {
         "ks": 0.07356257046223225,
         "ks_p_asymptotic": 0.979885231537596,
         "wasserstein": 0.4062570462232244
@@ -390,12 +732,14 @@
       "mean": {
         "reference": 4.677001127395716,
         "pool": 4.781499202551834,
-        "sample": 5.375
+        "sample": 5.1,
+        "sample_unquoted": 5.375
       },
       "median": {
         "reference": 4.0,
         "pool": 4.0,
-        "sample": 4.5
+        "sample": 4.5,
+        "sample_unquoted": 4.5
       },
       "pool_vs_reference": {
         "ks": 0.02211098105004239,
@@ -403,6 +747,11 @@
         "wasserstein": 0.15980879224812056
       },
       "sample_vs_reference": {
+        "ks": 0.06206313416009024,
+        "ks_p_asymptotic": 0.9975103133940446,
+        "wasserstein": 0.520405862457723
+      },
+      "sample_unquoted_vs_reference": {
         "ks": 0.09534949267192783,
         "ks_p_asymptotic": 0.8514918378478064,
         "wasserstein": 0.8658680947012405
@@ -413,12 +762,14 @@
       "mean": {
         "reference": 2.0073280721533258,
         "pool": 1.838915470494418,
-        "sample": 1.9
+        "sample": 1.925,
+        "sample_unquoted": 1.9
       },
       "median": {
         "reference": 2.0,
         "pool": 2.0,
-        "sample": 2.0
+        "sample": 2.0,
+        "sample_unquoted": 2.0
       },
       "pool_vs_reference": {
         "ks": 0.06062583947826927,
@@ -426,6 +777,11 @@
         "wasserstein": 0.16841260165890792
       },
       "sample_vs_reference": {
+        "ks": 0.0713923337091319,
+        "ks_p_asymptotic": 0.9853123686029936,
+        "wasserstein": 0.17375986471251412
+      },
+      "sample_unquoted_vs_reference": {
         "ks": 0.05572153325817364,
         "ks_p_asymptotic": 0.9995793304653042,
         "wasserstein": 0.1467869222096956
@@ -433,46 +789,46 @@
     }
   ],
   "selected_chembl_ids": [
-    "CHEMBL58",
-    "CHEMBL161",
+    "CHEMBL127",
     "CHEMBL185",
-    "CHEMBL422",
+    "CHEMBL186",
     "CHEMBL443",
-    "CHEMBL450",
-    "CHEMBL527",
-    "CHEMBL553",
-    "CHEMBL585",
+    "CHEMBL445",
+    "CHEMBL460",
+    "CHEMBL535",
+    "CHEMBL562",
+    "CHEMBL588",
     "CHEMBL608",
-    "CHEMBL659",
-    "CHEMBL746",
-    "CHEMBL761",
+    "CHEMBL708",
+    "CHEMBL719",
     "CHEMBL773",
-    "CHEMBL799",
-    "CHEMBL809",
-    "CHEMBL832",
-    "CHEMBL932",
+    "CHEMBL813",
+    "CHEMBL846",
+    "CHEMBL942",
     "CHEMBL959",
+    "CHEMBL1008",
     "CHEMBL1024",
-    "CHEMBL1103",
-    "CHEMBL1218",
+    "CHEMBL1106",
+    "CHEMBL1107",
+    "CHEMBL1219",
+    "CHEMBL1292",
     "CHEMBL1293",
-    "CHEMBL1328",
-    "CHEMBL1380",
     "CHEMBL1444",
-    "CHEMBL1447",
-    "CHEMBL1467",
-    "CHEMBL1550",
-    "CHEMBL6966",
-    "CHEMBL18442",
-    "CHEMBL38827",
-    "CHEMBL61593",
-    "CHEMBL157101",
+    "CHEMBL1466",
+    "CHEMBL1622",
+    "CHEMBL1668",
+    "CHEMBL1684",
+    "CHEMBL1750",
     "CHEMBL168815",
-    "CHEMBL296306",
-    "CHEMBL564085",
+    "CHEMBL249837",
+    "CHEMBL374478",
+    "CHEMBL566534",
     "CHEMBL1200660",
-    "CHEMBL1200907",
-    "CHEMBL1200937"
+    "CHEMBL1201198",
+    "CHEMBL1201288",
+    "CHEMBL1201891",
+    "CHEMBL1237072",
+    "CHEMBL1615438"
   ],
   "exclusions_written": 1465,
   "exclusions_redacted": 214
